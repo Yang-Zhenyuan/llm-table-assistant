@@ -19,9 +19,9 @@ Chinook.db
 chinook_url = "https://storage.googleapis.com/benchmarks-artifacts/chinook/Chinook.db"
 ```
 
-Northwind_small.sqlite
+sakila.db
 
 ```python
-northwind_url = "https://github.com/jpwhite3/northwind-SQLite3/raw/master/Northwind_small.sqlite"
+sakila_url = "https://github.com/bradleygrant/sakila-sqlite3/raw/main/sakila_master.db"
 ```
 
