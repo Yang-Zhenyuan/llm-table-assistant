@@ -1,40 +1,33 @@
-"""Utility functions for the retrieval graph.
+"""Utility functions for the retrieval graph (OpenAI version only).
 
-This module contains utility functions for handling messages, documents,
-and other common operations in project.
+This module contains utility functions for:
+- Handling messages (extracting text content)
+- Formatting documents as XML
+- Loading the OpenAI chat model
 
-Functions:
-    get_message_text: Extract text content from various message formats.
-    format_docs: Convert documents to an xml-formatted string.
+Original file had Azure support and extra logic, but this version is simplified
+to use only OpenAI API with configuration from `.env`.
 """
 
 from typing import Optional
-
-from langchain.chat_models import init_chat_model
 from langchain_core.documents import Document
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AnyMessage
+from langchain_openai import ChatOpenAI
+import os
+from dotenv import load_dotenv
+
+# Ensure .env is loaded (for OPENAI_API_KEY, OPENAI_MODEL)
+load_dotenv()
 
 
 def get_message_text(msg: AnyMessage) -> str:
-    """Get the text content of a message.
+    """Extract the text content from a LangChain message.
 
-    This function extracts the text content from various message formats.
-
-    Args:
-        msg (AnyMessage): The message object to extract text from.
-
-    Returns:
-        str: The extracted text content of the message.
-
-    Examples:
-        >>> from langchain_core.messages import HumanMessage
-        >>> get_message_text(HumanMessage(content="Hello"))
-        'Hello'
-        >>> get_message_text(HumanMessage(content={"text": "World"}))
-        'World'
-        >>> get_message_text(HumanMessage(content=[{"text": "Hello"}, " ", {"text": "World"}]))
-        'Hello World'
+    Supports:
+    - String content
+    - Dict content (expects 'text' field)
+    - List of content parts (string or dict)
     """
     content = msg.content
     if isinstance(content, str):
@@ -47,83 +40,48 @@ def get_message_text(msg: AnyMessage) -> str:
 
 
 def _format_doc(doc: Document) -> str:
-    """Format a single document as XML.
-
-    Args:
-        doc (Document): The document to format.
-
-    Returns:
-        str: The formatted document as an XML string.
-    """
+    """Format a single document as XML with metadata attributes."""
     metadata = doc.metadata or {}
     meta = "".join(f" {k}={v!r}" for k, v in metadata.items())
     if meta:
         meta = f" {meta}"
-
     return f"<document{meta}>\n{doc.page_content}\n</document>"
 
 
 def format_docs(docs: Optional[list[Document]]) -> str:
     """Format a list of documents as XML.
 
-    This function takes a list of Document objects and formats them into a single XML string.
-
-    Args:
-        docs (Optional[list[Document]]): A list of Document objects to format, or None.
-
-    Returns:
-        str: A string containing the formatted documents in XML format.
-
-    Examples:
-        >>> docs = [Document(page_content="Hello"), Document(page_content="World")]
-        >>> print(format_docs(docs))
+    Example:
         <documents>
-        <document>
-        Hello
-        </document>
-        <document>
-        World
-        </document>
+        <document source='file1'> ... </document>
+        <document source='file2'> ... </document>
         </documents>
-
-        >>> print(format_docs(None))
-        <documents></documents>
     """
     if not docs:
         return "<documents></documents>"
     formatted = "\n".join(_format_doc(doc) for doc in docs)
-    return f"""<documents>
-{formatted}
-</documents>"""
+    return f"<documents>\n{formatted}\n</documents>"
 
 
-def load_chat_model(fully_specified_name: str) -> BaseChatModel:
-    """Load a chat model from a fully specified name.
+def load_chat_model(model_name: str = None) -> BaseChatModel:
+    """Load an OpenAI chat model.
 
     Args:
-        fully_specified_name (str): String in the format 'provider/model'.
+        model_name (str, optional): The model name (e.g. 'gpt-4o-mini').
+                                    If None, defaults to OPENAI_MODEL in .env.
+
+    Requires:
+        - OPENAI_API_KEY in environment or .env file
+        - OPENAI_MODEL in environment or .env file (optional, default=gpt-4o-mini)
     """
-    if "/" in fully_specified_name:
-        provider, model = fully_specified_name.split("/", maxsplit=1)
-    else:
-        provider = ""
-        model = fully_specified_name
-    
-    # Handle Azure OpenAI models
-    if provider == "azure-openai":
-        from langchain_openai import AzureChatOpenAI
-        import os
-        from dotenv import load_dotenv
-        
-        # 确保加载环境变量
-        load_dotenv()
-        
-        return AzureChatOpenAI(
-            azure_deployment=model,
-            azure_endpoint=os.environ.get("AZURE_OPENAI_ENDPOINT"),
-            api_key=os.environ.get("AZURE_OPENAI_API_KEY"),
-            api_version=os.environ.get("AZURE_OPENAI_API_VERSION", "2024-02-15-preview"),
-            temperature=0,
-        )
-    
-    return init_chat_model(model, model_provider=provider)
+    model_name = model_name or os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+    api_key = os.getenv("OPENAI_API_KEY")
+
+    if not api_key:
+        raise ValueError("Missing OPENAI_API_KEY in environment variables or .env file")
+
+    return ChatOpenAI(
+        model=model_name,
+        api_key=api_key,
+        temperature=0,
+    )

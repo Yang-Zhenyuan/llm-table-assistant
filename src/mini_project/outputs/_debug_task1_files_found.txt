@@ -1,0 +1,16 @@
+D:\llm_table_assistant\data\Sakila_actor.csv
+D:\llm_table_assistant\data\Sakila_address.csv
+D:\llm_table_assistant\data\Sakila_category.csv
+D:\llm_table_assistant\data\Sakila_city.csv
+D:\llm_table_assistant\data\Sakila_country.csv
+D:\llm_table_assistant\data\Sakila_customer.csv
+D:\llm_table_assistant\data\Sakila_film.csv
+D:\llm_table_assistant\data\Sakila_film_actor.csv
+D:\llm_table_assistant\data\Sakila_film_category.csv
+D:\llm_table_assistant\data\Sakila_film_text.csv
+D:\llm_table_assistant\data\Sakila_inventory.csv
+D:\llm_table_assistant\data\Sakila_language.csv
+D:\llm_table_assistant\data\Sakila_payment.csv
+D:\llm_table_assistant\data\Sakila_rental.csv
+D:\llm_table_assistant\data\Sakila_staff.csv
+D:\llm_table_assistant\data\Sakila_store.csv

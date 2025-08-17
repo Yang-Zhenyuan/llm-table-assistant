@@ -237,6 +237,6 @@ def setup_database():
     
 db = setup_database()
 # Initialize the language model
-llm = load_chat_model("azure-openai/GPT4-O")
+llm = load_chat_model("openai/gpt-4o-mini")
 sql_agent_graph = SQLAgentGraph(db, llm).graph 
 sql_agent_graph.name = "SQLAgentGraph"

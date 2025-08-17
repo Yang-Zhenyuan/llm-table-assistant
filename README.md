@@ -6,6 +6,15 @@ pip install langgraph langchain_community "langchain[openai]"
 ```
 
 ```python
+pip install langchain-openai python-dotenv
+
+#langchain-openai
+#python-dotenv
+```
+
+
+
+```python
 pandas 读取和保存各种数据格式
 读取 CSV、Excel、JSON、SQL 数据库等
 pip install pandas
