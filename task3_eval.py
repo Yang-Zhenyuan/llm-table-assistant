@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Created on Sun Aug 18 09:13:22 2025
+
+@author: LENOVO
+"""
+"""
 Task 3: LLM-Based Evaluation of Retrieved Tables
 ------------------------------------------------
 Reads Task 1's schema summaries and Task 2's retrieved-table results,

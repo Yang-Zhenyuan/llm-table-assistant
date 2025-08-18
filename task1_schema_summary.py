@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+"""
+Created on Sun Aug 18 09:12:10 2025
+
+@author: LENOVO
+"""
 # File: src/mini_project/task1_schema_summary.py
 """
 Simplified output for Task 1.

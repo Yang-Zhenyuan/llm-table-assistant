@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Created on Sun Aug 18 09:19:12 2025
+
+@author: LENOVO
+"""
+"""
 Task 2 (ChatGPT version): LLM-based Table Selection
 ---------------------------------------------------
 Given a natural-language query, ask a ChatGPT-style model to select the most
