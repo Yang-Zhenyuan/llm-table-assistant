@@ -9,7 +9,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 
 import os
 import sys
-from retrieval_graph.llm_utils import load_chat_model
+from retrieval_graph.utils import load_chat_model
 
 
 print("脚本开始执行")

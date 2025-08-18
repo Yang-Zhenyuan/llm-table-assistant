@@ -1,0 +1,454 @@
+[
+  {
+    "table": "actor",
+    "summary": "This table represents the actors in the database, capturing their identities and the last time their details were updated. It is typically used for managing actor information in film and entertainment applications.",
+    "columns": [
+      {
+        "name": "actor_id",
+        "description": "A unique identifier for each actor."
+      },
+      {
+        "name": "first_name",
+        "description": "The first name of the actor."
+      },
+      {
+        "name": "last_name",
+        "description": "The last name of the actor."
+      },
+      {
+        "name": "last_update",
+        "description": "The timestamp of when the actor's details were last updated."
+      }
+    ]
+  },
+  {
+    "table": "address",
+    "summary": "This table stores information about physical addresses associated with various entities. It is typically used to manage location data for customers, vendors, or service points.",
+    "columns": [
+      {
+        "name": "address_id",
+        "description": "A unique identifier for each address."
+      },
+      {
+        "name": "address",
+        "description": "The primary street address of the location."
+      },
+      {
+        "name": "address2",
+        "description": "Additional address information, if applicable."
+      },
+      {
+        "name": "district",
+        "description": "The district or area where the address is located."
+      },
+      {
+        "name": "city_id",
+        "description": "A reference identifier for the city associated with the address."
+      },
+      {
+        "name": "postal_code",
+        "description": "The postal code for the address, if available."
+      },
+      {
+        "name": "phone",
+        "description": "Contact phone number related to the address, if provided."
+      },
+      {
+        "name": "last_update",
+        "description": "The timestamp of the last update made to the address record."
+      }
+    ]
+  },
+  {
+    "table": "category",
+    "summary": "This table represents different categories of content, such as movies or shows, and is used to organize and classify them. Typical use cases include filtering content by category for display or analysis.",
+    "columns": [
+      {
+        "name": "category_id",
+        "description": "A unique identifier for each category."
+      },
+      {
+        "name": "name",
+        "description": "The name of the category."
+      },
+      {
+        "name": "last_update",
+        "description": "The date and time when the category information was last updated."
+      }
+    ]
+  },
+  {
+    "table": "city",
+    "summary": "This table contains information about cities, including their unique identifiers and associated countries. It is typically used for geographic data analysis and to link cities to their respective countries in a database.",
+    "columns": [
+      {
+        "name": "city_id",
+        "description": "A unique identifier for each city."
+      },
+      {
+        "name": "city",
+        "description": "The name of the city."
+      },
+      {
+        "name": "country_id",
+        "description": "The identifier for the country the city is located in."
+      },
+      {
+        "name": "last_update",
+        "description": "The timestamp of the last update made to the city's information."
+      }
+    ]
+  },
+  {
+    "table": "country",
+    "summary": "This table contains information about various countries, including unique identifiers and timestamps for the last updates. It is typically used for reference in datasets that require country-specific data.",
+    "columns": [
+      {
+        "name": "country_id",
+        "description": "A unique identifier for each country."
+      },
+      {
+        "name": "country",
+        "description": "The name of the country."
+      },
+      {
+        "name": "last_update",
+        "description": "The timestamp of the last update made to the country record."
+      }
+    ]
+  },
+  {
+    "table": "customer",
+    "summary": "The customer table holds information about individuals who have registered with the store. It is typically used to manage customer details, track their activity, and facilitate communication.",
+    "columns": [
+      {
+        "name": "customer_id",
+        "description": "A unique identifier for each customer."
+      },
+      {
+        "name": "store_id",
+        "description": "The identifier for the store where the customer registered."
+      },
+      {
+        "name": "first_name",
+        "description": "The customer's first name."
+      },
+      {
+        "name": "last_name",
+        "description": "The customer's last name."
+      },
+      {
+        "name": "email",
+        "description": "The customer's email address."
+      },
+      {
+        "name": "address_id",
+        "description": "The identifier for the customer's address."
+      },
+      {
+        "name": "active",
+        "description": "A status flag indicating if the customer is currently active."
+      },
+      {
+        "name": "create_date",
+        "description": "The date and time when the customer was created."
+      },
+      {
+        "name": "last_update",
+        "description": "The date and time when the customer's information was last updated."
+      }
+    ]
+  },
+  {
+    "table": "film",
+    "summary": "This table contains information about various films available for rental, including their titles, descriptions, and rental details. It is typically used to manage a film inventory and facilitate rentals in a video store or a streaming service.",
+    "columns": [
+      {
+        "name": "film_id",
+        "description": "A unique identifier for each film."
+      },
+      {
+        "name": "title",
+        "description": "The title of the film."
+      },
+      {
+        "name": "description",
+        "description": "A brief summary of the film's plot."
+      },
+      {
+        "name": "release_year",
+        "description": "The year the film was released."
+      },
+      {
+        "name": "language_id",
+        "description": "An identifier for the language of the film."
+      },
+      {
+        "name": "original_language_id",
+        "description": "An identifier for the original language of the film, if different."
+      },
+      {
+        "name": "rental_duration",
+        "description": "The number of days the film can be rented."
+      },
+      {
+        "name": "rental_rate",
+        "description": "The cost to rent the film for the rental duration."
+      },
+      {
+        "name": "length",
+        "description": "The duration of the film in minutes."
+      },
+      {
+        "name": "replacement_cost",
+        "description": "The cost to replace the film if it is lost or damaged."
+      },
+      {
+        "name": "rating",
+        "description": "The film's age rating."
+      },
+      {
+        "name": "special_features",
+        "description": "Any additional features included with the film."
+      },
+      {
+        "name": "last_update",
+        "description": "The date and time when the film record was last updated."
+      }
+    ]
+  },
+  {
+    "table": "film_actor",
+    "summary": "This table represents the relationship between actors and the films they have appeared in. It is typically used to track which actors are associated with which films and to manage casting information.",
+    "columns": [
+      {
+        "name": "actor_id",
+        "description": "A unique identifier for each actor."
+      },
+      {
+        "name": "film_id",
+        "description": "A unique identifier for each film."
+      },
+      {
+        "name": "last_update",
+        "description": "The timestamp indicating when the record was last updated."
+      }
+    ]
+  },
+  {
+    "table": "film_category",
+    "summary": "The film_category table associates films with their respective categories, allowing for classification and organization of films in a database. It is typically used for querying films based on their genres or categories.",
+    "columns": [
+      {
+        "name": "film_id",
+        "description": "The unique identifier for a film."
+      },
+      {
+        "name": "category_id",
+        "description": "The unique identifier for a film category."
+      },
+      {
+        "name": "last_update",
+        "description": "The timestamp indicating when the record was last updated."
+      }
+    ]
+  },
+  {
+    "table": "film_text",
+    "summary": "This table contains detailed descriptions of films, including their titles and narrative summaries. It is typically used to provide context and information about films in a database.",
+    "columns": [
+      {
+        "name": "film_id",
+        "description": "A unique identifier for each film."
+      },
+      {
+        "name": "title",
+        "description": "The name of the film."
+      },
+      {
+        "name": "description",
+        "description": "A brief summary or plot description of the film."
+      }
+    ]
+  },
+  {
+    "table": "inventory",
+    "summary": "The inventory table represents the stock of films available across different stores. It is typically used to track the availability of films and their updates in the inventory system.",
+    "columns": [
+      {
+        "name": "inventory_id",
+        "description": "A unique identifier for each inventory record."
+      },
+      {
+        "name": "film_id",
+        "description": "The identifier for the film associated with the inventory item."
+      },
+      {
+        "name": "store_id",
+        "description": "The identifier for the store where the film is available."
+      },
+      {
+        "name": "last_update",
+        "description": "The date and time when the inventory record was last updated."
+      }
+    ]
+  },
+  {
+    "table": "language",
+    "summary": "This table stores information about different languages available in the system, including their unique identifiers and names. It is typically used for referencing languages in related datasets or applications.",
+    "columns": [
+      {
+        "name": "language_id",
+        "description": "A unique identifier for each language."
+      },
+      {
+        "name": "name",
+        "description": "The name of the language."
+      },
+      {
+        "name": "last_update",
+        "description": "The date and time when the language entry was last updated."
+      }
+    ]
+  },
+  {
+    "table": "payment",
+    "summary": "The payment table records transactions made by customers for rental services. It is typically used to track payment details, analyze revenue, and manage customer accounts.",
+    "columns": [
+      {
+        "name": "payment_id",
+        "description": "A unique identifier for each payment transaction."
+      },
+      {
+        "name": "customer_id",
+        "description": "The identifier for the customer making the payment."
+      },
+      {
+        "name": "staff_id",
+        "description": "The identifier for the staff member processing the payment."
+      },
+      {
+        "name": "rental_id",
+        "description": "The identifier for the rental associated with the payment."
+      },
+      {
+        "name": "amount",
+        "description": "The total amount of money paid in the transaction."
+      },
+      {
+        "name": "payment_date",
+        "description": "The date and time when the payment was made."
+      },
+      {
+        "name": "last_update",
+        "description": "The date and time when the payment record was last updated."
+      }
+    ]
+  },
+  {
+    "table": "rental",
+    "summary": "This table tracks the details of rental transactions including who rented items, when they were rented, and when they were returned. It is typically used for managing inventory and analyzing rental patterns.",
+    "columns": [
+      {
+        "name": "rental_id",
+        "description": "A unique identifier for each rental transaction."
+      },
+      {
+        "name": "rental_date",
+        "description": "The date and time when the item was rented."
+      },
+      {
+        "name": "inventory_id",
+        "description": "The unique identifier of the inventory item that was rented."
+      },
+      {
+        "name": "customer_id",
+        "description": "The unique identifier of the customer who rented the item."
+      },
+      {
+        "name": "return_date",
+        "description": "The date and time when the item was returned."
+      },
+      {
+        "name": "staff_id",
+        "description": "The unique identifier of the staff member who processed the rental."
+      },
+      {
+        "name": "last_update",
+        "description": "The date and time when the rental record was last updated."
+      }
+    ]
+  },
+  {
+    "table": "staff",
+    "summary": "The staff table contains information about employees working in various stores. It is typically used to manage staff details, including their contact information and employment status.",
+    "columns": [
+      {
+        "name": "staff_id",
+        "description": "A unique identifier for each staff member."
+      },
+      {
+        "name": "first_name",
+        "description": "The first name of the staff member."
+      },
+      {
+        "name": "last_name",
+        "description": "The last name of the staff member."
+      },
+      {
+        "name": "address_id",
+        "description": "The ID linking to the staff member's address."
+      },
+      {
+        "name": "picture",
+        "description": "A profile picture of the staff member, if available."
+      },
+      {
+        "name": "email",
+        "description": "The email address of the staff member."
+      },
+      {
+        "name": "store_id",
+        "description": "The ID of the store where the staff member works."
+      },
+      {
+        "name": "active",
+        "description": "Indicates if the staff member is currently active (1) or not (0)."
+      },
+      {
+        "name": "username",
+        "description": "The username used by the staff member for login."
+      },
+      {
+        "name": "password",
+        "description": "The hashed password for the staff member's account."
+      },
+      {
+        "name": "last_update",
+        "description": "The timestamp of the last update to the staff member's information."
+      }
+    ]
+  },
+  {
+    "table": "store",
+    "summary": "This table contains information about each store location, including its management and address details. It is typically used for managing store operations and tracking updates.",
+    "columns": [
+      {
+        "name": "store_id",
+        "description": "A unique identifier for each store."
+      },
+      {
+        "name": "manager_staff_id",
+        "description": "The identifier for the staff member managing the store."
+      },
+      {
+        "name": "address_id",
+        "description": "The identifier for the store's address."
+      },
+      {
+        "name": "last_update",
+        "description": "The timestamp of the last update made to the store's information."
+      }
+    ]
+  }
+]

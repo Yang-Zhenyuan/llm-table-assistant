@@ -5,26 +5,6 @@ Created on Sun Aug 17 05:35:10 2025
 @author: LENOVO
 """
 
-# # ---- Task 1: Table Schema Summarisation Prompt ----
-# SCHEMA_SUMMARY_PROMPT = """You are a data analyst who explains database tables to non-experts.
-# Given a table's name, inferred column types, basic stats, and a few sample rows,
-# produce a concise, user-friendly summary.
-
-# Output strictly as compact JSON with the following keys:
-# - table: string (table name, without extension)
-# - summary: string (2–3 sentences: what the table represents, the grain, typical usage)
-# - columns: list of {name: string, description: string} (plain-English meaning of each column)
-# - keys: optional {primary_key?: [str], foreign_keys?: [{column: str, references: str}]}
-
-# Rules:
-# - Do not just restate column names; explain their meaning.
-# - If possible, infer primary/foreign keys from names (e.g., *_id) and value patterns.
-# - Capture time units/amount units if obvious.
-# - Keep it neutral, avoid speculation if unclear.
-# """
-
-# TABLE_MATCH_PROMPT = """..."""
-# EVAL_PROMPT = """..."""
 
 
 # prompts.py
@@ -50,8 +30,46 @@ Rules:
 """
 
 
-TABLE_MATCH_PROMPT = """Given the user query and N candidate table summaries,
-pick the K most relevant tables and briefly justify why (one phrase each)."""
+TABLE_MATCH_PROMPT = """You are a meticulous data analyst.
+Given a user query and a list of candidate table summaries, select the K most relevant tables.
 
-EVAL_PROMPT = """Rate relevance 1–5 (1=irrelevant, 5=highly relevant) between a user query and a single table summary.
-Return: 'score: <1-5>' on the first line, and one-sentence reason on the second line."""
+Return ONLY a strict JSON object with this shape:
+{
+  "query": "<echo query>",
+  "choices": [
+    {"table": "<table_name>", "score": <1-5>, "reason": "<short phrase, <=15 words>"},
+    ...
+  ]
+}
+
+Rules:
+- Choose exactly K entries in "choices".
+- Higher score = more relevant.
+- Keep reasons short and specific (column names or key fields help).
+- Do NOT invent tables that were not provided.
+- Prefer tables whose summaries/columns directly support the query constraints.
+"""
+
+
+
+
+EVAL_PROMPT = """You are a rigorous data analyst.
+Judge how relevant ONE candidate table is to the given user query.
+
+Scoring scale:
+5 = Fully aligned. This table alone contains the key fields needed to answer the query.
+4 = Mostly aligned. It answers the main intent but might miss minor constraints/fields.
+3 = Partially related. Provides context/partial info; likely needs joins with other tables.
+2 = Weakly related. Only tangentially related to the topic.
+1 = Irrelevant.
+
+Instructions:
+- Base your decision on the provided table summary, column list, and the 3 sample rows.
+- Think about whether the table has the exact entities, filters, and measures needed.
+- Be concise and concrete in explanations.
+- Output STRICT JSON ONLY with keys:
+  { "query": str, "table": str, "relevance_rating": 1-5, "sufficient_to_answer": true/false,
+    "why": [short bullets], "missing_info": [fields/constraints not found],
+    "irrelevant_info": [fields that are off-topic for this query] }
+- No markdown fences, no extra keys, no comments.
+"""

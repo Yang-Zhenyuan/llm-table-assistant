@@ -1,6 +1,0 @@
-{
-  "query": "films longer than 120 minutes in Italian",
-  "matched_tables": [],
-  "method": "llm-direct",
-  "csv_dir": "D:/llm_table_assistant/data"
-}
