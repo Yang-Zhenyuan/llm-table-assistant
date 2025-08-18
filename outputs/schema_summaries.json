@@ -1,7 +1,7 @@
 [
   {
-    "table": "actor",
-    "summary": "This table contains information about actors, including their unique identifiers and names. It is typically used to manage and reference actor data in a database for film or media applications.",
+    "table": "sakila_actor",
+    "summary": "The Sakila_actor table contains information about actors in the Sakila film database. It is typically used to retrieve actor details for film-related queries and reports.",
     "columns": [
       {
         "name": "actor_id",
@@ -17,13 +17,13 @@
       },
       {
         "name": "last_update",
-        "description": "The timestamp of the last update made to the actor's information."
+        "description": "The timestamp of the last update made to the actor's record."
       }
     ]
   },
   {
-    "table": "address",
-    "summary": "The address table stores information about various locations associated with entities in the database. It is typically used to retrieve and manage address details for customers or businesses.",
+    "table": "sakila_address",
+    "summary": "The Sakila_address table stores information about addresses used in the Sakila database, which is typically for a film rental business. It is used to manage customer and store locations effectively.",
     "columns": [
       {
         "name": "address_id",
@@ -31,7 +31,7 @@
       },
       {
         "name": "address",
-        "description": "The primary street address."
+        "description": "The primary address line."
       },
       {
         "name": "address2",
@@ -39,7 +39,7 @@
       },
       {
         "name": "district",
-        "description": "The district or region of the address."
+        "description": "The district where the address is located."
       },
       {
         "name": "city_id",
@@ -51,7 +51,7 @@
       },
       {
         "name": "phone",
-        "description": "A contact phone number related to the address."
+        "description": "The phone number associated with the address."
       },
       {
         "name": "last_update",
@@ -60,26 +60,26 @@
     ]
   },
   {
-    "table": "category",
-    "summary": "This table represents different categories of content, typically used in a media or entertainment database. It helps in organizing and classifying various types of content for easier retrieval and management.",
+    "table": "sakila_category",
+    "summary": "The Sakila_category table represents different categories of films available in the Sakila database. It is typically used to classify films for easier searching and filtering based on genre.",
     "columns": [
       {
         "name": "category_id",
-        "description": "A unique identifier for each category."
+        "description": "A unique identifier for each film category."
       },
       {
         "name": "name",
-        "description": "The name of the category."
+        "description": "The name of the film category."
       },
       {
         "name": "last_update",
-        "description": "The timestamp of when the category information was last updated."
+        "description": "The timestamp of the last update made to the category record."
       }
     ]
   },
   {
-    "table": "city",
-    "summary": "This table contains information about various cities, including their identifiers and associated countries. It is typically used for geographic data analysis and to link cities with their respective countries.",
+    "table": "sakila_city",
+    "summary": "The Sakila_city table contains information about cities associated with various countries. It is typically used to reference city names and their corresponding country identifiers in a database.",
     "columns": [
       {
         "name": "city_id",
@@ -91,17 +91,17 @@
       },
       {
         "name": "country_id",
-        "description": "The identifier for the country where the city is located."
+        "description": "The identifier for the country to which the city belongs."
       },
       {
         "name": "last_update",
-        "description": "The timestamp of the last update made to the city's information."
+        "description": "The timestamp of the last update made to the city record."
       }
     ]
   },
   {
-    "table": "country",
-    "summary": "This table contains information about countries, including their unique identifiers and the last time their data was updated. It is typically used for referencing country details in various datasets or applications.",
+    "table": "sakila_country",
+    "summary": "This table contains information about countries relevant to the Sakila database. It is typically used to reference country names and their unique identifiers in various data operations.",
     "columns": [
       {
         "name": "country_id",
@@ -113,13 +113,13 @@
       },
       {
         "name": "last_update",
-        "description": "The timestamp of the last update made to the country's data."
+        "description": "The timestamp of the last update made to the country record."
       }
     ]
   },
   {
-    "table": "customer",
-    "summary": "The customer table contains information about individuals who have made purchases at the store. It is typically used to manage customer data, track customer activity, and analyze purchasing behavior.",
+    "table": "sakila_customer",
+    "summary": "The Sakila_customer table contains information about customers who have made purchases at the Sakila store. It is typically used to manage customer data, track customer activity, and analyze purchasing behavior.",
     "columns": [
       {
         "name": "customer_id",
@@ -160,8 +160,8 @@
     ]
   },
   {
-    "table": "film",
-    "summary": "The film table contains information about various movies available for rental, including their titles, descriptions, and rental details. It is typically used to manage and display film inventory in a rental system.",
+    "table": "sakila_film",
+    "summary": "The Sakila_film table contains information about films available for rental, including their titles, descriptions, and rental details. It is typically used to manage film inventory and provide insights into rental performance and customer preferences.",
     "columns": [
       {
         "name": "film_id",
@@ -193,11 +193,11 @@
       },
       {
         "name": "rental_rate",
-        "description": "The cost to rent the film for the specified duration."
+        "description": "The cost to rent the film per rental period."
       },
       {
         "name": "length",
-        "description": "The total runtime of the film in minutes."
+        "description": "The duration of the film in minutes."
       },
       {
         "name": "replacement_cost",
@@ -205,7 +205,7 @@
       },
       {
         "name": "rating",
-        "description": "The film's content rating."
+        "description": "The film's rating indicating its suitability for different audiences."
       },
       {
         "name": "special_features",
@@ -218,26 +218,26 @@
     ]
   },
   {
-    "table": "film_actor",
-    "summary": "The film_actor table represents the relationship between actors and the films they have appeared in. It is typically used to track which actors are associated with which films and to manage actor-film assignments.",
+    "table": "sakila_film_actor",
+    "summary": "This table represents the relationship between actors and the films they have appeared in. It is typically used to track which actors are associated with which films in the Sakila database.",
     "columns": [
       {
         "name": "actor_id",
-        "description": "A unique identifier for each actor."
+        "description": "The unique identifier for an actor."
       },
       {
         "name": "film_id",
-        "description": "A unique identifier for each film."
+        "description": "The unique identifier for a film."
       },
       {
         "name": "last_update",
-        "description": "The timestamp of the last update made to the record."
+        "description": "The timestamp of the last update made to this record."
       }
     ]
   },
   {
-    "table": "film_category",
-    "summary": "The film_category table links films to their respective categories, allowing for the organization and classification of films. It is typically used to retrieve all categories associated with a specific film or to find all films within a certain category.",
+    "table": "sakila_film_category",
+    "summary": "This table links films to their respective categories in the Sakila database. It is typically used to categorize films for reporting and querying purposes.",
     "columns": [
       {
         "name": "film_id",
@@ -245,7 +245,7 @@
       },
       {
         "name": "category_id",
-        "description": "The unique identifier for each film category."
+        "description": "The unique identifier for the category to which the film belongs."
       },
       {
         "name": "last_update",
@@ -254,8 +254,8 @@
     ]
   },
   {
-    "table": "film_text",
-    "summary": "The film_text table contains detailed information about films, including their titles and descriptions. It is typically used to retrieve and display film-related data for applications such as movie databases or streaming services.",
+    "table": "sakila_film_text",
+    "summary": "This table contains detailed information about films in the Sakila database, including their titles and descriptions. It is typically used for retrieving film-related data for reporting or analysis.",
     "columns": [
       {
         "name": "film_id",
@@ -263,17 +263,17 @@
       },
       {
         "name": "title",
-        "description": "The name of the film."
+        "description": "The title of the film."
       },
       {
         "name": "description",
-        "description": "A brief summary or overview of the film's plot."
+        "description": "A brief summary of the film's plot."
       }
     ]
   },
   {
-    "table": "inventory",
-    "summary": "The inventory table tracks the availability of films across different stores. It is typically used to manage stock levels and monitor updates to film inventory.",
+    "table": "sakila_inventory",
+    "summary": "The Sakila_inventory table tracks the inventory of films available in different stores. It is typically used to manage and monitor film stock levels across various locations.",
     "columns": [
       {
         "name": "inventory_id",
@@ -285,7 +285,7 @@
       },
       {
         "name": "store_id",
-        "description": "The identifier for the store where the film is available."
+        "description": "The identifier for the store where the film is located."
       },
       {
         "name": "last_update",
@@ -294,8 +294,8 @@
     ]
   },
   {
-    "table": "language",
-    "summary": "This table contains information about different languages available in the system. It is typically used to reference language options for localization or translation purposes.",
+    "table": "sakila_language",
+    "summary": "This table represents the different languages available in the Sakila database, typically used to categorize films and other media by language. It is useful for querying and reporting on language-specific content.",
     "columns": [
       {
         "name": "language_id",
@@ -307,13 +307,13 @@
       },
       {
         "name": "last_update",
-        "description": "The date and time when the language record was last updated."
+        "description": "The timestamp of the last update made to the language record."
       }
     ]
   },
   {
-    "table": "payment",
-    "summary": "The payment table records transactions made by customers for rentals, detailing the amount paid and the associated rental information. It is typically used for tracking revenue and analyzing customer payment behavior.",
+    "table": "sakila_payment",
+    "summary": "The Sakila_payment table records all payment transactions made by customers for rentals. It is typically used to track payment history and analyze revenue generated from rentals.",
     "columns": [
       {
         "name": "payment_id",
@@ -325,7 +325,7 @@
       },
       {
         "name": "staff_id",
-        "description": "The identifier for the staff member processing the payment."
+        "description": "The identifier for the staff member who processed the payment."
       },
       {
         "name": "rental_id",
@@ -333,7 +333,7 @@
       },
       {
         "name": "amount",
-        "description": "The total amount paid by the customer."
+        "description": "The total amount paid in the transaction."
       },
       {
         "name": "payment_date",
@@ -346,8 +346,8 @@
     ]
   },
   {
-    "table": "rental",
-    "summary": "The rental table tracks the details of movie rentals, including when they were rented and returned. It is typically used to manage inventory and customer transactions in a rental business.",
+    "table": "sakila_rental",
+    "summary": "The Sakila_rental table tracks the rental transactions of movies in the Sakila database. It is used to manage and analyze rental activity, including which movies are rented, by whom, and when they are returned.",
     "columns": [
       {
         "name": "rental_id",
@@ -355,19 +355,19 @@
       },
       {
         "name": "rental_date",
-        "description": "The date and time when the rental was initiated."
+        "description": "The date and time when the rental transaction occurred."
       },
       {
         "name": "inventory_id",
-        "description": "The identifier for the specific item being rented."
+        "description": "The identifier for the specific movie inventory item that was rented."
       },
       {
         "name": "customer_id",
-        "description": "The identifier for the customer who rented the item."
+        "description": "The identifier for the customer who rented the movie."
       },
       {
         "name": "return_date",
-        "description": "The date and time when the rented item was returned."
+        "description": "The date and time when the rented movie was returned."
       },
       {
         "name": "staff_id",
@@ -380,8 +380,8 @@
     ]
   },
   {
-    "table": "staff",
-    "summary": "The staff table contains information about employees working in various stores. It is typically used to manage staff details, including their contact information and employment status.",
+    "table": "sakila_staff",
+    "summary": "The Sakila_staff table contains information about the staff members working in the Sakila database. It is typically used to manage staff details, including their contact information and employment status.",
     "columns": [
       {
         "name": "staff_id",
@@ -397,7 +397,7 @@
       },
       {
         "name": "address_id",
-        "description": "A reference to the staff member's address."
+        "description": "The identifier for the staff member's address."
       },
       {
         "name": "picture",
@@ -430,8 +430,8 @@
     ]
   },
   {
-    "table": "store",
-    "summary": "The store table represents individual retail locations, detailing their management and address information. It is typically used to track store operations and updates.",
+    "table": "sakila_store",
+    "summary": "The Sakila_store table represents the different stores in the Sakila database, including their management and location details. It is typically used to track store information and manage store operations.",
     "columns": [
       {
         "name": "store_id",
@@ -439,11 +439,11 @@
       },
       {
         "name": "manager_staff_id",
-        "description": "The identifier for the staff member managing the store."
+        "description": "The staff ID of the manager responsible for the store."
       },
       {
         "name": "address_id",
-        "description": "The identifier for the store's physical address."
+        "description": "The identifier for the address associated with the store."
       },
       {
         "name": "last_update",
