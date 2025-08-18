@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Sun Aug 18 09:13:22 2025
@@ -25,10 +24,10 @@ Usage:
 """
 
 import argparse, os, json, re, datetime, random
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 from pathlib import Path
 from dotenv import load_dotenv
-load_dotenv()  # 这样会自动读取同目录下的 .env 文件
+load_dotenv()   #load .evn
 
 # Optional: load .env so OPENAI_API_KEY/OPENAI_MODEL work even if not exported
 def bootstrap_env(env_path: str = ".env"):
@@ -82,10 +81,7 @@ def norm_name(x: str) -> str:
 
 
 def build_table_index(csv_dir: str) -> Dict[str, str]:
-    """
-    Map normalized table_name -> csv path
-    'Sakila_actor.csv' -> 'sakila_actor'
-    """
+    # Map normalized table_name -> csv path 'Sakila_actor.csv' -> 'sakila_actor'
     idx: Dict[str, str] = {}
     for p in Path(csv_dir).glob("*.csv"):
         stem = norm_name(p.stem)
@@ -197,6 +193,46 @@ def spearman(a: List[float], b: List[float]) -> Optional[float]:
     num = 6 * sum((ra[i]-rb[i])**2 for i in range(n))
     return 1 - num / (n*(n**2 - 1))
 
+def write_reflection(out_reflect: str,
+                     choices: List[Dict[str, Any]],
+                     pairs: List[Tuple[str, float, float]],
+                     scores_t2: List[float],
+                     ratings_t3: List[float]) -> None:
+    """
+    生成 Task3 的 reflection 文件，包括 Top-1 一致性和 Spearman 秩相关。
+    """
+    lines_ref: List[str] = ["# Task 3 – Reflection\n"]
+
+    # ---- Top-1 一致性 ----
+    t2_top = None
+    if choices:
+        t2_top = max(
+            choices,
+            key=lambda c: (c.get("score", float("-inf")), -len(str(c.get("table", ""))))
+        ).get("table")
+
+    t3_top = None
+    valid = [(tbl, r) for (tbl, _, r) in pairs if isinstance(r, (int, float))]
+    if valid:
+        t3_top = max(valid, key=lambda x: x[1])[0]
+
+    lines_ref.append(f"- Top-1 (Task2): **{t2_top}**" if t2_top else "- Top-1 (Task2): N/A")
+    lines_ref.append(f"- Top-1 (Task3): **{t3_top}**" if t3_top else "- Top-1 (Task3): N/A")
+    if t2_top and t3_top:
+        lines_ref.append(f"- Top-1 match: **{'YES' if t2_top == t3_top else 'NO'}**")
+
+    # ---- Spearman ----
+    if ratings_t3 and scores_t2:
+        r = spearman(scores_t2, ratings_t3)
+        if r is not None:
+            lines_ref.append(f"- Spearman(Task2_score, Task3_rating) = **{r:.3f}**")
+    else:
+        lines_ref.append("- Not enough overlapping numeric scores to compute correlation.")
+
+    lines_ref.append("\nFor qualitative analysis, see `task3_examples.md`.")
+    write_text(out_reflect, "\n".join(lines_ref))
+
+
 
 def main():
     parser = argparse.ArgumentParser(description="Task 3: LLM-based evaluation of Task 2 tables")
@@ -261,12 +297,14 @@ def main():
     print(f"Model: {model}")
     print(f"Candidates from Task2: {len(choices)}")
 
+    #make .md document
     ratings_t3: List[float] = []
     scores_t2: List[float] = []
     lines_md: List[str] = [f"# Task 3 – LLM Evaluation for Query\n\n**Query:** {query}\n\n"]
+    pairs: List[Tuple[str, float, float]] = []   # (table, task2_score, task3_rating)
 
+    
     now = datetime.datetime.now().isoformat(timespec="seconds")
-
     for c in choices:
         tbl = c.get("table") or ""
         t2_score = c.get("score", None)
@@ -317,29 +355,37 @@ def main():
         if isinstance(data.get("relevance_rating"), (int, float)) and isinstance(t2_score, (int, float)):
             ratings_t3.append(float(data["relevance_rating"]))
             scores_t2.append(float(t2_score))
+            # 记录每个表的 (表名, Task2 分数, Task3 评分)
+            pairs.append((tbl, float(t2_score) if isinstance(t2_score, (int, float)) else 0.0,
+              float(data.get("relevance_rating", 0.0))))
+
 
     # Save MD
     write_text(out_md, "\n".join(lines_md))
 
-    # Quick numeric reflection
-    lines_ref: List[str] = ["# Task 3 – Reflection\n"]
-    if ratings_t3 and scores_t2:
-        r = spearman(scores_t2, ratings_t3)
-        lines_ref.append(f"- Spearman(Task2_score, Task3_rating) = **{r:.3f}**" if r is not None else "- Not enough points for correlation.")
-        # spot inconsistencies
-        diffs = []
-        for c in choices:
-            t2s = c.get("score", 0)
-            name = c.get("table")
-            # find t3 record back from jsonl? (skip reread; approximate by MD parse)
-            # not necessary for now
-        lines_ref.append("\n- If correlation is low, check cases where Task2 high but Task3 ≤3, or vice versa.")
-    else:
-        lines_ref.append("- Not enough overlapping numeric scores to compute correlation.")
+    # # Quick numeric reflection
+    # Reflection 输出
+    write_reflection(out_reflect, choices, pairs, scores_t2, ratings_t3)
 
-    lines_ref.append("\nThis reflection is numeric-only. For the report, skim `task3_examples.md` "
-                     "and pick 2–3 representative cases to discuss agreement/disagreement reasons.")
-    write_text(out_reflect, "\n".join(lines_ref))
+    # lines_ref: List[str] = ["# Task 3 – Reflection\n"]
+    # if ratings_t3 and scores_t2:
+    #     r = spearman(scores_t2, ratings_t3)
+    #     lines_ref.append(f"- Spearman(Task2_score, Task3_rating) = **{r:.3f}**" if r is not None else "- Not enough points for correlation.")
+    #     # spot inconsistencies
+    #     diffs = []
+        
+    #     for c in choices:
+    #         t2s = c.get("score", 0)
+    #         name = c.get("table")
+    #         # find t3 record back from jsonl? (skip reread; approximate by MD parse)
+    #         # not necessary for now
+    #     lines_ref.append("\n- If correlation is low, check cases where Task2 high but Task3 ≤3, or vice versa.")
+    # else:
+    #     lines_ref.append("- Not enough overlapping numeric scores to compute correlation.")
+
+    # lines_ref.append("\nThis reflection is numeric-only. For the report, skim `task3_examples.md` "
+    #                  "and pick 2–3 representative cases to discuss agreement/disagreement reasons.")
+    # write_text(out_reflect, "\n".join(lines_ref))
 
     print(f"Saved: {out_jsonl}")
     print(f"Saved: {out_md}")

@@ -2,5 +2,4 @@
 .env
 .env
 
-"z_private"
-.z_private
+z_private/

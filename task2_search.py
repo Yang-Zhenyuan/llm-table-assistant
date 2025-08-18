@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Sun Aug 18 09:19:12 2025
@@ -6,26 +5,12 @@ Created on Sun Aug 18 09:19:12 2025
 @author: LENOVO
 """
 """
-Task 2 (ChatGPT version): LLM-based Table Selection
----------------------------------------------------
-Given a natural-language query, ask a ChatGPT-style model to select the most
-relevant tables by *reading your Task 1 summaries* (defaults to outputs/schema_summaries.json).
-
-This follows the Mini-Project instruction that Task 2 should reference the
-schema summaries produced in Task 1.
-
 Usage
 -----
 python task2_search_chatgpt.py "films longer than 120 minutes in Italian" --k 5
 python task2_search_chatgpt.py "employee salaries" --schemas outputs/schema_summaries.json --model gpt-4o-mini
 
-Environment
------------
-- Requires OPENAI_API_KEY in env (or .env if you use python-dotenv)
-- Optional OPENAI_MODEL (default: gpt-4o-mini)
 
-Output
-------
 - Prints ranked tables with short justifications
 - Saves a machine-readable dump to task2_llm_results.json
 """
@@ -37,7 +22,7 @@ import os
 import re
 from typing import Any, Dict, List, Optional
 from dotenv import load_dotenv
-load_dotenv()  # 这样会自动读取同目录下的 .env 文件
+load_dotenv()  # load .envv
 
 # from src.retrieval_graph.utils import load_chat_model
 from openai import OpenAI  # openai>=1.0
@@ -170,7 +155,7 @@ def main():
             "columns": (match or {}).get("columns"),
         })
 
-    # Pretty print
+    # print
     print("=" * 80)
     print(f"Query: {args.query}")
     print(f"Model: {args.model}")
@@ -182,10 +167,10 @@ def main():
             print(f"    path: {r['path']}")
     print("=" * 80)
 
-  # 确保根目录下有 outputs/task2 文件夹
     os.makedirs(os.path.join("outputs", "task2"), exist_ok=True)
+    # insure contain outputs/task2 
     
-    # 保存结果到 outputs/task2/task2_llm_results.json
+    # save result to outputs/task2/task2_llm_results.json
     write_json(os.path.join("outputs", "task2", "task2_llm_results.json"), {
         "query": args.query,
         "model": args.model,

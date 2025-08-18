@@ -4,16 +4,13 @@ Created on Sun Aug 18 09:12:10 2025
 
 @author: LENOVO
 """
-# File: src/mini_project/task1_schema_summary.py
 """
 Simplified output for Task 1.
 
-Change highlights:
-- Output a single pretty JSON array (NOT JSONL).
+- Output a JSON(NOT JSONL).
 - Only include: table, summary, columns[{name, description}].
 - The summary MUST state the table's purpose.
 
-Keeps the previous discovery + debug list behavior.
 """
 
 import os, re, glob, json
@@ -53,17 +50,16 @@ def get_schema_prompt():
             )
 
 CONFIG = {
-    "csv_dir": os.path.join(os.path.dirname(__file__), "data"),   # CSV 目录
-    "out": os.path.join("outputs", "task1", "schema_summaries.json"), # 输出 JSON 数组
+    "csv_dir": os.path.join(os.path.dirname(__file__), "data"),   # CSV
+    "out": os.path.join("outputs", "task1", "schema_summaries.json"), # output JSON
     "sample_rows": 5,                            # 提示给 LLM 的样例行数
     "use_llm": True,
     "llm_name": "gpt-4o-mini",
-    "lower_table": True,                         # 是否把表名统一小写
+    "lower_table": True,                         # lower case
 }
 
-# -----------------------
+
 # File helpers
-# -----------------------
 def discover_csvs(csv_dir: str):
     paths = []
     for pat in ("*.csv", "*.CSV"):
@@ -79,11 +75,9 @@ def read_csv_any(p: str) -> pd.DataFrame:
             pass
     return pd.read_csv(p)  # 最后一次按默认再试
 
-# -----------------------
-# Core logic
-# -----------------------
+
 def simple_fallback(table: str, df: pd.DataFrame) -> dict:
-    #无 LLM 时的兜底：满足提交结构即可
+    #when have not loaded llm
     return {
         "table": table,
         "summary": (
@@ -95,11 +89,11 @@ def simple_fallback(table: str, df: pd.DataFrame) -> dict:
     }
 
 def llm_structured_summary(llm, prompt: str, table: str, df: pd.DataFrame, sample_rows: int) -> dict:
-    """让模型直接返回严格 JSON；只传必要信息以减少冗余。"""
+    #让模型直接返回严格 JSON；只传必要信息
     payload = {
         "table": table,
-        "columns": [str(c) for c in df.columns],             # 仅列名
-        "sample_rows": df.head(sample_rows).to_dict(orient="records"),  # 少量样例行
+        "columns": [str(c) for c in df.columns],             # columns only
+        "sample_rows": df.head(sample_rows).to_dict(orient="records"),  # some sample_rows
     }
     messages = [
         {"role": "system", "content": prompt},
@@ -107,12 +101,12 @@ def llm_structured_summary(llm, prompt: str, table: str, df: pd.DataFrame, sampl
     ]
     resp = llm.invoke(messages)
     txt = getattr(resp, "content", str(resp)).strip()
-    # 剥离可能的围栏
+    # delete {} if exit
     if "{" in txt and "}" in txt:
         txt = txt[txt.find("{"): txt.rfind("}")+1]
     obj = json.loads(txt)
 
-    # 归一化与兜底
+    # normalization
     t = obj.get("table") or table
     cols_out = obj.get("columns") or []
     cols_out = [{"name": str(c.get("name","")), "description": str(c.get("description","")).strip()}

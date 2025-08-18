@@ -18,16 +18,16 @@
 ## Table: `customer`
 - **Task3 rating:** 1  ❌ not sufficient
 - **Task2 score:** 2
-- **Why:** The table is about customers, not actors.; It does not contain any information related to actors or their last names.
-- **Missing info:** Actor details; Last name filter specifically for actors
+- **Why:** The table contains customer information, not actor information.; The query specifically asks for an actor, which is not relevant to the customer table.
+- **Missing info:** actor details; filmography; roles
 - **Irrelevant info:** customer_id; store_id; first_name; email; address_id; active; create_date; last_update
 
 ## Table: `staff`
 - **Task3 rating:** 1  ❌ not sufficient
 - **Task2 score:** 2
-- **Why:** The table is about staff in stores, not actors.; It does not contain any information related to actors or their last names.; The context of the query is completely unrelated to the staff table.
-- **Missing info:** actor details; last name filter for actors
-- **Irrelevant info:** staff_id; first_name; address_id; picture; email; store_id; active; username; password; last_update
+- **Why:** The table contains information about employees, not actors.; The query specifically asks for an actor, which is not represented in the staff table.
+- **Missing info:** Actor-specific fields; Filmography or roles; Actor identification
+- **Irrelevant info:** Staff ID; First name; Address ID; Picture; Email; Store ID; Active status; Username; Password; Last update
 
 ## Table: `film`
 - **Task3 rating:** 1  ❌ not sufficient
