@@ -1,7 +1,7 @@
 [
   {
     "table": "actor",
-    "summary": "This table contains information about actors, including their names and the last time their records were updated. It is typically used for managing actor data in a film database.",
+    "summary": "This table contains information about actors, including their unique identifiers and names. It is typically used to manage and reference actor data in a database for film or media applications.",
     "columns": [
       {
         "name": "actor_id",
@@ -17,13 +17,13 @@
       },
       {
         "name": "last_update",
-        "description": "The timestamp of the last update made to the actor's record."
+        "description": "The timestamp of the last update made to the actor's information."
       }
     ]
   },
   {
     "table": "address",
-    "summary": "The address table stores information about various locations associated with customers or businesses. It is typically used to retrieve and manage address details for shipping, billing, or contact purposes.",
+    "summary": "The address table stores information about various locations associated with entities in the database. It is typically used to retrieve and manage address details for customers or businesses.",
     "columns": [
       {
         "name": "address_id",
@@ -51,7 +51,7 @@
       },
       {
         "name": "phone",
-        "description": "A contact phone number associated with the address."
+        "description": "A contact phone number related to the address."
       },
       {
         "name": "last_update",
@@ -61,7 +61,7 @@
   },
   {
     "table": "category",
-    "summary": "This table represents different categories of content, typically used to classify items in a database. It helps in organizing and retrieving content based on its genre or type.",
+    "summary": "This table represents different categories of content, typically used in a media or entertainment database. It helps in organizing and classifying various types of content for easier retrieval and management.",
     "columns": [
       {
         "name": "category_id",
@@ -73,7 +73,7 @@
       },
       {
         "name": "last_update",
-        "description": "The date and time when the category information was last updated."
+        "description": "The timestamp of when the category information was last updated."
       }
     ]
   },
@@ -119,7 +119,7 @@
   },
   {
     "table": "customer",
-    "summary": "The customer table contains information about individuals who have made purchases at the store. It is typically used to manage customer data, track their activity, and analyze purchasing behavior.",
+    "summary": "The customer table contains information about individuals who have made purchases at the store. It is typically used to manage customer data, track customer activity, and analyze purchasing behavior.",
     "columns": [
       {
         "name": "customer_id",
@@ -255,7 +255,7 @@
   },
   {
     "table": "film_text",
-    "summary": "The film_text table contains detailed information about films, including their unique identifiers and descriptions. It is typically used to retrieve film titles and their corresponding summaries for display or analysis.",
+    "summary": "The film_text table contains detailed information about films, including their titles and descriptions. It is typically used to retrieve and display film-related data for applications such as movie databases or streaming services.",
     "columns": [
       {
         "name": "film_id",
@@ -263,17 +263,17 @@
       },
       {
         "name": "title",
-        "description": "The title of the film."
+        "description": "The name of the film."
       },
       {
         "name": "description",
-        "description": "A brief summary of the film's plot or content."
+        "description": "A brief summary or overview of the film's plot."
       }
     ]
   },
   {
     "table": "inventory",
-    "summary": "The inventory table tracks the stock of films available across different stores. It is typically used to manage film availability and monitor stock levels in various locations.",
+    "summary": "The inventory table tracks the availability of films across different stores. It is typically used to manage stock levels and monitor updates to film inventory.",
     "columns": [
       {
         "name": "inventory_id",
@@ -295,7 +295,7 @@
   },
   {
     "table": "language",
-    "summary": "This table contains information about different languages available in the system. It is typically used to reference language options for various applications or content.",
+    "summary": "This table contains information about different languages available in the system. It is typically used to reference language options for localization or translation purposes.",
     "columns": [
       {
         "name": "language_id",
@@ -313,7 +313,7 @@
   },
   {
     "table": "payment",
-    "summary": "The payment table records transactions made by customers for rentals. It is typically used to track payment details, including amounts and dates, for financial reporting and analysis.",
+    "summary": "The payment table records transactions made by customers for rentals, detailing the amount paid and the associated rental information. It is typically used for tracking revenue and analyzing customer payment behavior.",
     "columns": [
       {
         "name": "payment_id",
@@ -333,7 +333,7 @@
       },
       {
         "name": "amount",
-        "description": "The total amount paid in the transaction."
+        "description": "The total amount paid by the customer."
       },
       {
         "name": "payment_date",
@@ -347,7 +347,7 @@
   },
   {
     "table": "rental",
-    "summary": "The rental table tracks the details of movie rentals, including when they were rented and returned. It is typically used to manage rental transactions and analyze rental patterns.",
+    "summary": "The rental table tracks the details of movie rentals, including when they were rented and returned. It is typically used to manage inventory and customer transactions in a rental business.",
     "columns": [
       {
         "name": "rental_id",
@@ -381,7 +381,7 @@
   },
   {
     "table": "staff",
-    "summary": "The staff table contains information about employees working in the stores, including their personal details and login credentials. It is typically used for managing staff records and access control within the organization.",
+    "summary": "The staff table contains information about employees working in various stores. It is typically used to manage staff details, including their contact information and employment status.",
     "columns": [
       {
         "name": "staff_id",
@@ -401,7 +401,7 @@
       },
       {
         "name": "picture",
-        "description": "A URL or path to the staff member's profile picture."
+        "description": "A link or reference to the staff member's picture, if available."
       },
       {
         "name": "email",
@@ -431,7 +431,7 @@
   },
   {
     "table": "store",
-    "summary": "This table represents the details of each store in a retail chain, including its management and location. It is typically used to track store information and updates.",
+    "summary": "The store table represents individual retail locations, detailing their management and address information. It is typically used to track store operations and updates.",
     "columns": [
       {
         "name": "store_id",
@@ -443,7 +443,7 @@
       },
       {
         "name": "address_id",
-        "description": "The identifier for the store's address."
+        "description": "The identifier for the store's physical address."
       },
       {
         "name": "last_update",
