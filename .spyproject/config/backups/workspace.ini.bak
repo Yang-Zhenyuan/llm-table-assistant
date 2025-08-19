@@ -4,7 +4,7 @@ save_data_on_exit = True
 save_history = True
 save_non_project_files = False
 project_type = 'empty-project-type'
-recent_files = ['src\\retrieval_graph\\utils.py', '.env', 'test_api.py', 'src\\retrieval_graph\\prompts.py', 'task1_schema_summary.py', 'task2_search.py', 'task3_eval.py']
+recent_files = ['task1_schema_summary.py', 'task2_search.py', 'task3_eval.py', 'test_api.py', 'prepare_data.py']
 
 [main]
 version = 0.2.0

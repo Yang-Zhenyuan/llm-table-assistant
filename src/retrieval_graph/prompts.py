@@ -33,11 +33,18 @@ Rules:
 TABLE_MATCH_PROMPT = """You are a meticulous data analyst.
 Given a user query and a list of candidate table summaries, select the K most relevant tables.
 
+Scoring scale:
+5 = Fully relevant. The table directly satisfies the query.
+4 = Mostly relevant. Covers the main intent but may miss minor fields or constraints.
+3 = Partially relevant. Provides some useful context but not sufficient alone.
+2 = Weakly relevant. Only tangentially connected to the query.
+1 = Irrelevant. No meaningful connection to the query.
+
 Return ONLY a strict JSON object with this shape:
 {
   "query": "<echo query>",
   "choices": [
-    {"table": "<table_name>", "score": <1-5>, "reason": "<short phrase, <=15 words>"},
+    {"table": "<table_name>", "score": <1-5>, "reason": "<short phrase, <=20 words>"},
     ...
   ]
 }

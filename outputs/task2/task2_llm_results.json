@@ -1,158 +1,14 @@
 {
-  "query": "find an actor whose last name is GUINESS",
+  "query": "films longer than 120 minutes in Italian",
   "model": "gpt-4o-mini",
-  "schemas": "outputs/schema_summaries.json",
+  "schemas": "outputs/task1/schema_summaries.json",
   "choices": [
     {
-      "table": "actor",
-      "score": 5,
-      "reason": "Contains last names of actors",
-      "path": null,
-      "summary": "The actor table contains information about actors, including their names and the last time their records were updated. It is typically used for managing and referencing actor details in a database.",
-      "columns": [
-        {
-          "name": "actor_id",
-          "description": "A unique identifier for each actor."
-        },
-        {
-          "name": "first_name",
-          "description": "The first name of the actor."
-        },
-        {
-          "name": "last_name",
-          "description": "The last name of the actor."
-        },
-        {
-          "name": "last_update",
-          "description": "The timestamp of the last update made to the actor's record."
-        }
-      ]
-    },
-    {
-      "table": "film_actor",
-      "score": 4,
-      "reason": "Links actors to films, relevant for actor queries",
-      "path": null,
-      "summary": "The film_actor table represents the many-to-many relationship between actors and films, indicating which actors have appeared in which films. It is typically used to query actor filmographies or to analyze casting patterns in film productions.",
-      "columns": [
-        {
-          "name": "actor_id",
-          "description": "The unique identifier for each actor."
-        },
-        {
-          "name": "film_id",
-          "description": "The unique identifier for each film."
-        },
-        {
-          "name": "last_update",
-          "description": "The timestamp indicating when the record was last updated."
-        }
-      ]
-    },
-    {
-      "table": "customer",
-      "score": 2,
-      "reason": "Contains last names but not specifically actors",
-      "path": null,
-      "summary": "The customer table contains information about individuals who have made purchases at various stores. It is typically used for managing customer relationships and analyzing purchasing behavior.",
-      "columns": [
-        {
-          "name": "customer_id",
-          "description": "A unique identifier for each customer."
-        },
-        {
-          "name": "store_id",
-          "description": "The identifier of the store where the customer made purchases."
-        },
-        {
-          "name": "first_name",
-          "description": "The customer's first name."
-        },
-        {
-          "name": "last_name",
-          "description": "The customer's last name."
-        },
-        {
-          "name": "email",
-          "description": "The customer's email address for communication."
-        },
-        {
-          "name": "address_id",
-          "description": "The identifier for the customer's address."
-        },
-        {
-          "name": "active",
-          "description": "Indicates whether the customer is currently active (1 for active, 0 for inactive)."
-        },
-        {
-          "name": "create_date",
-          "description": "The date and time when the customer record was created."
-        },
-        {
-          "name": "last_update",
-          "description": "The date and time when the customer record was last updated."
-        }
-      ]
-    },
-    {
-      "table": "staff",
-      "score": 2,
-      "reason": "Contains last names but not specifically actors",
-      "path": null,
-      "summary": "The staff table contains information about employees in a retail context, including their contact details and store assignments. It is typically used for managing employee records and access within the organization.",
-      "columns": [
-        {
-          "name": "staff_id",
-          "description": "A unique identifier for each staff member."
-        },
-        {
-          "name": "first_name",
-          "description": "The first name of the staff member."
-        },
-        {
-          "name": "last_name",
-          "description": "The last name of the staff member."
-        },
-        {
-          "name": "address_id",
-          "description": "The identifier for the address associated with the staff member."
-        },
-        {
-          "name": "picture",
-          "description": "A link or reference to the staff member's profile picture."
-        },
-        {
-          "name": "email",
-          "description": "The email address of the staff member."
-        },
-        {
-          "name": "store_id",
-          "description": "The identifier for the store where the staff member works."
-        },
-        {
-          "name": "active",
-          "description": "Indicates whether the staff member is currently active (1) or inactive (0)."
-        },
-        {
-          "name": "username",
-          "description": "The username used by the staff member for system access."
-        },
-        {
-          "name": "password",
-          "description": "The hashed password for the staff member's account."
-        },
-        {
-          "name": "last_update",
-          "description": "The timestamp of the last update made to the staff member's record."
-        }
-      ]
-    },
-    {
       "table": "film",
-      "score": 1,
-      "reason": "Related to actors but does not contain names",
+      "score": 5,
+      "reason": "Contains film length and language information.",
       "path": null,
-      "summary": "The 'film' table catalogs movies available for rental, detailing their characteristics and features. Typical use cases include managing film inventory, rental transactions, and customer recommendations.",
+      "summary": "The film table contains data about movies available for rental, including their characteristics and pricing. It is commonly used to manage inventory and track film attributes in a rental system.",
       "columns": [
         {
           "name": "film_id",
@@ -172,11 +28,11 @@
         },
         {
           "name": "language_id",
-          "description": "Identifier for the language in which the film is available."
+          "description": "The identifier for the primary language of the film."
         },
         {
           "name": "original_language_id",
-          "description": "Identifier for the film's original language, if different."
+          "description": "The identifier for the film's original language, if different."
         },
         {
           "name": "rental_duration",
@@ -184,7 +40,7 @@
         },
         {
           "name": "rental_rate",
-          "description": "The cost to rent the film for a specified duration."
+          "description": "The cost to rent the film for the specified duration."
         },
         {
           "name": "length",
@@ -192,19 +48,103 @@
         },
         {
           "name": "replacement_cost",
-          "description": "The cost to replace the film if it is lost or damaged."
+          "description": "The cost to replace the film if lost or damaged."
         },
         {
           "name": "rating",
-          "description": "The film's age rating."
+          "description": "The film's rating indicating appropriate audience age."
         },
         {
           "name": "special_features",
-          "description": "Additional features available with the film, such as deleted scenes."
+          "description": "Additional features included with the film, such as behind-the-scenes content."
         },
         {
           "name": "last_update",
           "description": "The date and time when the film record was last updated."
+        }
+      ]
+    },
+    {
+      "table": "language",
+      "score": 4,
+      "reason": "Defines languages, including Italian.",
+      "path": null,
+      "summary": "This table represents different languages supported in a system, including their identifiers and last update timestamps. Typical use cases include language selection in applications and tracking updates to language resources.",
+      "columns": [
+        {
+          "name": "language_id",
+          "description": "A unique identifier for each language."
+        },
+        {
+          "name": "name",
+          "description": "The name of the language."
+        },
+        {
+          "name": "last_update",
+          "description": "The date and time when the language entry was last updated."
+        }
+      ]
+    },
+    {
+      "table": "film_actor",
+      "score": 2,
+      "reason": "Links actors to films, but not directly relevant.",
+      "path": null,
+      "summary": "The film_actor table links actors to the films they have appeared in. It is typically used to track actor participation in various films and manage filmography data.",
+      "columns": [
+        {
+          "name": "actor_id",
+          "description": "The unique identifier for an actor."
+        },
+        {
+          "name": "film_id",
+          "description": "The unique identifier for a film."
+        },
+        {
+          "name": "last_update",
+          "description": "The timestamp of the last update made to this record."
+        }
+      ]
+    },
+    {
+      "table": "film_category",
+      "score": 2,
+      "reason": "Associates films with categories, not directly relevant.",
+      "path": null,
+      "summary": "The film_category table associates films with their respective categories, indicating which genres each film belongs to. It is typically used to categorize films for filtering and search functionalities in a database.",
+      "columns": [
+        {
+          "name": "film_id",
+          "description": "The unique identifier for each film."
+        },
+        {
+          "name": "category_id",
+          "description": "The identifier for the category to which the film belongs."
+        },
+        {
+          "name": "last_update",
+          "description": "The timestamp of the last update made to the film-category relationship."
+        }
+      ]
+    },
+    {
+      "table": "film_text",
+      "score": 2,
+      "reason": "Provides film titles and descriptions, but not length.",
+      "path": null,
+      "summary": "This table contains details about films, including unique identifiers and descriptive information. It is typically used for retrieving and displaying film titles and their descriptions in applications or reports.",
+      "columns": [
+        {
+          "name": "film_id",
+          "description": "A unique identifier for each film."
+        },
+        {
+          "name": "title",
+          "description": "The title of the film."
+        },
+        {
+          "name": "description",
+          "description": "A brief summary or overview of the film."
         }
       ]
     }

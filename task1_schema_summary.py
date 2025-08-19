@@ -17,13 +17,11 @@ import os, re, glob, json
 from pathlib import Path
 import pandas as pd
 
-# -----------------------
-# Minimal utilities
-# -----------------------
+
 def get_chat_model(name: str):
     #统一获取 chat 模型，优先用项目内 loader，失败再尝试本地 utils。
     try:
-        from retrieval_graph.utils import load_chat_model as _loader
+        from src.retrieval_graph.utils import load_chat_model as _loader
         return _loader(name)
     except Exception:
         try:
@@ -35,7 +33,7 @@ def get_chat_model(name: str):
 def get_schema_prompt():
     #获取 Task1 的提示词；若无则用内置默认
     try:
-        from retrieval_graph.prompts import SCHEMA_SUMMARY_PROMPT as P
+        from src.retrieval_graph.prompts import SCHEMA_SUMMARY_PROMPT as P
         return P
     except Exception:
         try:
@@ -52,7 +50,7 @@ def get_schema_prompt():
 CONFIG = {
     "csv_dir": os.path.join(os.path.dirname(__file__), "data"),   # CSV
     "out": os.path.join("outputs", "task1", "schema_summaries.json"), # output JSON
-    "sample_rows": 5,                            # 提示给 LLM 的样例行数
+    "sample_rows": 5,                            # 提示给 LLM 的样例行数 to help infer semantics
     "use_llm": True,
     "llm_name": "gpt-4o-mini",
     "lower_table": True,                         # lower case
@@ -93,7 +91,7 @@ def llm_structured_summary(llm, prompt: str, table: str, df: pd.DataFrame, sampl
     payload = {
         "table": table,
         "columns": [str(c) for c in df.columns],             # columns only
-        "sample_rows": df.head(sample_rows).to_dict(orient="records"),  # some sample_rows
+        "sample_rows": df.head(sample_rows).to_dict(orient="records"),  # row = 5. If available, include a few rows of sample data in the prompt to help infer semantics.
     }
     messages = [
         {"role": "system", "content": prompt},

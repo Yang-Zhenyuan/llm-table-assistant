@@ -1,3 +1,4 @@
+from __future__ import annotations
 # -*- coding: utf-8 -*-
 """
 Created on Sun Aug 18 09:19:12 2025
@@ -14,7 +15,6 @@ python task2_search_chatgpt.py "employee salaries" --schemas outputs/schema_summ
 - Prints ranked tables with short justifications
 - Saves a machine-readable dump to task2_llm_results.json
 """
-from __future__ import annotations
 
 import argparse
 import json
@@ -25,7 +25,11 @@ from dotenv import load_dotenv
 load_dotenv()  # load .envv
 
 # from src.retrieval_graph.utils import load_chat_model
-from openai import OpenAI  # openai>=1.0
+from openai import OpenAI  
+try:
+    from src.retrieval_graph.utils import load_chat_model
+except ImportError:
+    from utils import load_chat_model  # 兼容直接在根目录运行
 
 
 def read_json(path: str) -> Any:
@@ -37,14 +41,16 @@ def write_json(path: str, obj: Any) -> None:
     with open(path, "w", encoding="utf-8") as f:
         json.dump(obj, f, ensure_ascii=False, indent=2)
 
-
+# 取每个列的 name，最多显示 max_cols 个（默认 12）。
+# 超过就用 "..." 代替，避免 prompt 太长。
 def compact_columns(columns: List[Dict[str, str]], max_cols: int = 12) -> str:
     names = [c.get("name", "") for c in columns if isinstance(c, dict)]
     if len(names) > max_cols:
         names = names[:max_cols] + ["..."]
     return ", ".join([n for n in names if n])
 
-
+# 每张表压缩成一个简短描述，包含：表名、路径（如果有）、摘要（≤320字符）、前 16 个列名。
+# 这些字符串会拼进 LLM prompt 里。
 def build_table_snippet(tbl: Dict[str, Any], max_summary_len: int = 320) -> str:
     name = tbl.get("table") or tbl.get("name") or "unknown_table"
     path = tbl.get("path") or ""
@@ -89,20 +95,15 @@ def call_llm_rank(query: str, table_snippets: List[str], k: int, model: str) -> 
     if OpenAI is None:
         raise RuntimeError("openai package not installed. Run: pip install openai")
 
-    client = OpenAI()
-    # We will send up to ~30 tables to keep prompt reasonable
+    llm = load_chat_model(model)
     content = f"User query:\n{query}\n\nK = {k}\n\nCandidate tables:\n" + "\n".join(table_snippets)
 
-    resp = client.chat.completions.create(
-        model=model,
-        messages=[
-            {"role": "system", "content": TABLE_MATCH_PROMPT},
-            {"role": "user", "content": content},
-        ],
-        temperature=0,
-        response_format={"type": "json_object"},  # Ask the API to enforce JSON
-    )
-    txt = resp.choices[0].message.content or "{}"
+    resp = llm.invoke([
+        {"role": "system", "content": TABLE_MATCH_PROMPT},
+        {"role": "user", "content": content},
+    ])
+
+    txt = getattr(resp, "content", str(resp)).strip()
     try:
         data = json.loads(txt)
     except Exception:
@@ -115,9 +116,10 @@ def call_llm_rank(query: str, table_snippets: List[str], k: int, model: str) -> 
 
 
 def main():
+    # 从命令行解析参数：查询语句、Task1 输出文件路径、选 K 个表、模型名、候选表数量上限
     parser = argparse.ArgumentParser(description="Task 2 (ChatGPT): Rank tables using Task 1 summaries + LLM")
     parser.add_argument("query", type=str, help="Natural language query")
-    parser.add_argument("--schemas", type=str, default="outputs/schema_summaries.json",
+    parser.add_argument("--schemas", type=str, default="outputs/task1/schema_summaries.json",
                         help="Path to Task 1 schema summaries JSON")
     parser.add_argument("--k", type=int, default=5, help="How many tables to select")
     parser.add_argument("--model", type=str, default=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
@@ -127,7 +129,7 @@ def main():
 
     if not os.path.exists(args.schemas):
         raise FileNotFoundError(f"Schema summaries not found: {args.schemas}")
-
+    # 读取 schema 摘要
     summaries = read_json(args.schemas)
     if not isinstance(summaries, list) or not summaries:
         raise ValueError("Schema summaries JSON must be a non-empty list")
@@ -138,6 +140,8 @@ def main():
     result = call_llm_rank(args.query, snippets, args.k, args.model)
 
     # Normalize output
+    # 从 LLM 返回的结果提取出表名/分数/理由。 
+    # 在原始 summaries 里找回该表的完整 path/summary/columns，方便后续使用。
     choices = result.get("choices") or []
     ranked = []
     for c in choices:
@@ -155,7 +159,7 @@ def main():
             "columns": (match or {}).get("columns"),
         })
 
-    # print
+    # print results
     print("=" * 80)
     print(f"Query: {args.query}")
     print(f"Model: {args.model}")

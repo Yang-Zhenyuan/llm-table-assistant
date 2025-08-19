@@ -1,37 +1,39 @@
 # Task 3 – LLM Evaluation for Query
 
-**Query:** find an actor whose last name is GUINESS
+**Query:** films longer than 120 minutes in Italian
 
 
-## Table: `actor`
-- **Task3 rating:** 5  ✅ sufficient
+## Table: `film`
+- **Task3 rating:** 2  ❌ not sufficient
 - **Task2 score:** 5
-- **Why:** The table contains the 'last_name' field which is essential for the query.; It includes relevant sample data showing an actor with the last name 'GUINESS'.; The table is specifically designed to manage actor information.
+- **Why:** The table includes a length column to filter films by duration.; Language information is partially present but lacks specification for Italian films.
+- **Missing info:** Language specification for Italian films; Length filter for durations greater than 120 minutes
+- **Irrelevant info:** Film descriptions; Rental details; Rating and special features
+
+## Table: `language`
+- **Task3 rating:** 1  ❌ not sufficient
+- **Task2 score:** 4
+- **Why:** The table only contains information about languages and does not include any film duration or genre data.; It does not provide any information about films, which is the main focus of the query.
+- **Missing info:** Film duration; Film title; Film language association
+- **Irrelevant info:** language_id; last_update
 
 ## Table: `film_actor`
 - **Task3 rating:** 1  ❌ not sufficient
-- **Task2 score:** 4
-- **Why:** The table does not contain any information about actor names, specifically last names.; It only tracks actor IDs and film IDs without any personal identification details.
-- **Missing info:** actor_name; last_name
+- **Task2 score:** 2
+- **Why:** The table links actors to films but does not contain any information about film durations.; It lacks language information, which is essential for filtering films in Italian.
+- **Missing info:** film duration; film language
 - **Irrelevant info:** actor_id; film_id; last_update
 
-## Table: `customer`
+## Table: `film_category`
 - **Task3 rating:** 1  ❌ not sufficient
 - **Task2 score:** 2
-- **Why:** The table contains customer information, not actor information.; The query specifically asks for an actor, which is not relevant to the customer table.
-- **Missing info:** actor details; filmography; roles
-- **Irrelevant info:** customer_id; store_id; first_name; email; address_id; active; create_date; last_update
+- **Why:** The table only categorizes films and does not contain information about film duration.; It lacks any fields related to language or title, which are essential to identify Italian films.
+- **Missing info:** film duration; film language; film title
+- **Irrelevant info:** film_id; category_id; last_update
 
-## Table: `staff`
+## Table: `film_text`
 - **Task3 rating:** 1  ❌ not sufficient
 - **Task2 score:** 2
-- **Why:** The table contains information about employees, not actors.; The query specifically asks for an actor, which is not represented in the staff table.
-- **Missing info:** Actor-specific fields; Filmography or roles; Actor identification
-- **Irrelevant info:** Staff ID; First name; Address ID; Picture; Email; Store ID; Active status; Username; Password; Last update
-
-## Table: `film`
-- **Task3 rating:** 1  ❌ not sufficient
-- **Task2 score:** 1
-- **Why:** The table contains information about films, not actors.; There are no fields related to actor names or their last names.
-- **Missing info:** actor name; actor last name
-- **Irrelevant info:** film_id; title; description; release_year; language_id; original_language_id; rental_duration; rental_rate; length; replacement_cost; rating; special_features; last_update
+- **Why:** The table only contains film titles and descriptions, lacking duration information.; It does not include any language-related fields.
+- **Missing info:** film duration; language
+- **Irrelevant info:** film_id; description

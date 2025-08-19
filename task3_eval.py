@@ -28,33 +28,11 @@ from typing import Any, Dict, List, Optional, Tuple
 from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()   #load .evn
-
-# Optional: load .env so OPENAI_API_KEY/OPENAI_MODEL work even if not exported
-def bootstrap_env(env_path: str = ".env"):
-    if os.getenv("OPENAI_API_KEY"):
-        return
-    try:
-        if not os.path.exists(env_path):
-            return
-        with open(env_path, "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line or line.startswith("#") or "=" not in line:
-                    continue
-                k, v = line.split("=", 1)
-                k, v = k.strip(), v.strip()
-                if k and v and (k not in os.environ):
-                    os.environ[k] = v
-    except Exception:
-        pass
-
-bootstrap_env(".env")
-
-# OpenAI (>=1.0) client just like Task 2
 try:
-    from openai import OpenAI
+    from src.retrieval_graph.utils import load_chat_model
 except Exception:
-    OpenAI = None  # type: ignore
+    from utils import load_chat_model
+
 
 import pandas as pd
 
@@ -130,36 +108,41 @@ def sample_rows(csv_path: str, n: int = 3) -> List[Dict[str, Any]]:
 # """
 # from src.retrieval_graph.prompts import EVAL_PROMPT
 
-from retrieval_graph.prompts import EVAL_PROMPT
+from src.retrieval_graph.prompts import EVAL_PROMPT
 
 def call_llm_eval(model: str, query: str, table: str,
                   summary: str, columns: List[Dict[str, Any]],
                   samples: List[Dict[str, Any]]) -> Dict[str, Any]:
-    if OpenAI is None:
-        raise RuntimeError("openai package not installed. Run: pip install openai")
+    """
+    Use utils.load_chat_model(model) to eval one candidate table against the query.
+    Return STRICT-JSON as dictated by EVAL_PROMPT; robust to minor formatting drift.
+    """
+    llm = load_chat_model(model)
+    if llm is None:
+        raise RuntimeError("Failed to load chat model. Check utils.load_chat_model / OPENAI_* envs.")
 
-    client = OpenAI()
-    col_names = [c["name"] if isinstance(c, dict) and "name" in c else str(c) for c in (columns or [])][:64]
-    # keep payload compact
+    # 2) 压缩负载，控制 token
+    col_names = [c["name"] if isinstance(c, dict) and "name" in c else str(c)
+                 for c in (columns or [])][:64]
+
     payload: Dict[str, Any] = {
         "query": query,
         "table": table,
-        "table_summary": (summary or "")[:800],
-        "columns": col_names[:40],
-        "samples": samples[:3],
+        "table_summary": (summary or "")[:800],  # 摘要截断
+        "columns": col_names[:40],               # 只传前 40 列名
+        "samples": samples[:3],                  # 只传 3 行样例
     }
     user_content = json.dumps(payload, ensure_ascii=False)
 
-    resp = client.chat.completions.create(
-        model=model,
-        messages=[
-            {"role": "system", "content": EVAL_PROMPT},
-            {"role": "user", "content": user_content},
-        ],
-        temperature=0,
-        response_format={"type": "json_object"},
-    )
-    txt = resp.choices[0].message.content or "{}"
+    # 3) 直接用 llm.invoke(messages)（与 Task1 一致）
+    messages = [
+        {"role": "system", "content": EVAL_PROMPT},
+        {"role": "user", "content": user_content},
+    ]
+    resp = llm.invoke(messages)
+
+    # 4) 解析输出
+    txt = getattr(resp, "content", str(resp)).strip()
     try:
         data = json.loads(txt)
     except Exception:
@@ -167,7 +150,8 @@ def call_llm_eval(model: str, query: str, table: str,
         if not m:
             raise ValueError(f"LLM did not return JSON. Raw:\n{txt}")
         data = json.loads(m.group(0))
-    # Add guardrails/defaults
+
+    # 5) 补默认键，避免缺字段
     data.setdefault("query", query)
     data.setdefault("table", table)
     data.setdefault("relevance_rating", 0)
@@ -176,6 +160,7 @@ def call_llm_eval(model: str, query: str, table: str,
     data.setdefault("missing_info", [])
     data.setdefault("irrelevant_info", [])
     return data
+
 
 
 def spearman(a: List[float], b: List[float]) -> Optional[float]:
@@ -203,7 +188,7 @@ def write_reflection(out_reflect: str,
     """
     lines_ref: List[str] = ["# Task 3 – Reflection\n"]
 
-    # ---- Top-1 一致性 ----
+    # check top-1
     t2_top = None
     if choices:
         t2_top = max(
@@ -219,7 +204,7 @@ def write_reflection(out_reflect: str,
     lines_ref.append(f"- Top-1 (Task2): **{t2_top}**" if t2_top else "- Top-1 (Task2): N/A")
     lines_ref.append(f"- Top-1 (Task3): **{t3_top}**" if t3_top else "- Top-1 (Task3): N/A")
     if t2_top and t3_top:
-        lines_ref.append(f"- Top-1 match: **{'YES' if t2_top == t3_top else 'NO'}**")
+        lines_ref.append(f"- Top-1 of task2 and task3 is same: **{'YES' if t2_top == t3_top else 'NO'}**")
 
     # ---- Spearman ----
     if ratings_t3 and scores_t2:
@@ -367,25 +352,6 @@ def main():
     # Reflection 输出
     write_reflection(out_reflect, choices, pairs, scores_t2, ratings_t3)
 
-    # lines_ref: List[str] = ["# Task 3 – Reflection\n"]
-    # if ratings_t3 and scores_t2:
-    #     r = spearman(scores_t2, ratings_t3)
-    #     lines_ref.append(f"- Spearman(Task2_score, Task3_rating) = **{r:.3f}**" if r is not None else "- Not enough points for correlation.")
-    #     # spot inconsistencies
-    #     diffs = []
-        
-    #     for c in choices:
-    #         t2s = c.get("score", 0)
-    #         name = c.get("table")
-    #         # find t3 record back from jsonl? (skip reread; approximate by MD parse)
-    #         # not necessary for now
-    #     lines_ref.append("\n- If correlation is low, check cases where Task2 high but Task3 ≤3, or vice versa.")
-    # else:
-    #     lines_ref.append("- Not enough overlapping numeric scores to compute correlation.")
-
-    # lines_ref.append("\nThis reflection is numeric-only. For the report, skim `task3_examples.md` "
-    #                  "and pick 2–3 representative cases to discuss agreement/disagreement reasons.")
-    # write_text(out_reflect, "\n".join(lines_ref))
 
     print(f"Saved: {out_jsonl}")
     print(f"Saved: {out_md}")
