@@ -1,0 +1,196 @@
+{
+  "query": "Do u have the email of SMITH?",
+  "model": "gpt-4o-mini",
+  "schemas": "outputs/task1/schema_summaries.json",
+  "choices": [
+    {
+      "table": "customer",
+      "score": 5,
+      "reason": "Contains email and customer names.",
+      "path": null,
+      "summary": "The customer table stores information about customers who make purchases at the store. It is typically used for tracking customer details, managing customer relationships, and analyzing purchasing behavior.",
+      "columns": [
+        {
+          "name": "customer_id",
+          "description": "A unique identifier for each customer."
+        },
+        {
+          "name": "store_id",
+          "description": "The identifier for the store where the customer made purchases."
+        },
+        {
+          "name": "first_name",
+          "description": "The customer's first name."
+        },
+        {
+          "name": "last_name",
+          "description": "The customer's last name."
+        },
+        {
+          "name": "email",
+          "description": "The customer's email address."
+        },
+        {
+          "name": "address_id",
+          "description": "The identifier for the customer's address."
+        },
+        {
+          "name": "active",
+          "description": "Indicates whether the customer is currently active (1) or inactive (0)."
+        },
+        {
+          "name": "create_date",
+          "description": "The date and time when the customer record was created."
+        },
+        {
+          "name": "last_update",
+          "description": "The date and time when the customer record was last updated."
+        }
+      ]
+    },
+    {
+      "table": "staff",
+      "score": 5,
+      "reason": "Includes email and staff names.",
+      "path": null,
+      "summary": "The staff table contains information about employees working in a store, including their personal details and credentials. It is typically used for managing staff records and access within the system.",
+      "columns": [
+        {
+          "name": "staff_id",
+          "description": "A unique identifier for each staff member."
+        },
+        {
+          "name": "first_name",
+          "description": "The first name of the staff member."
+        },
+        {
+          "name": "last_name",
+          "description": "The last name of the staff member."
+        },
+        {
+          "name": "address_id",
+          "description": "An identifier linking to the staff member's address."
+        },
+        {
+          "name": "picture",
+          "description": "A URL or reference to the staff member's picture, if available."
+        },
+        {
+          "name": "email",
+          "description": "The email address for the staff member."
+        },
+        {
+          "name": "store_id",
+          "description": "An identifier for the store where the staff member works."
+        },
+        {
+          "name": "active",
+          "description": "A flag indicating whether the staff member is currently active."
+        },
+        {
+          "name": "username",
+          "description": "The username for the staff member's account."
+        },
+        {
+          "name": "password",
+          "description": "The hashed password for the staff member's account."
+        },
+        {
+          "name": "last_update",
+          "description": "The timestamp of the last update made to the staff member's record."
+        }
+      ]
+    },
+    {
+      "table": "actor",
+      "score": 2,
+      "reason": "Has names but no email information.",
+      "path": null,
+      "summary": "The actor table stores information about actors, including their names and the last time their records were updated. It is typically used in databases related to film or entertainment to manage actor data.",
+      "columns": [
+        {
+          "name": "actor_id",
+          "description": "A unique identifier for each actor."
+        },
+        {
+          "name": "first_name",
+          "description": "The first name of the actor."
+        },
+        {
+          "name": "last_name",
+          "description": "The last name of the actor."
+        },
+        {
+          "name": "last_update",
+          "description": "The timestamp of the last update to the actor's record."
+        }
+      ]
+    },
+    {
+      "table": "address",
+      "score": 1,
+      "reason": "No email or relevant data.",
+      "path": null,
+      "summary": "This table stores information about various addresses associated with locations. It is typically used to manage and retrieve address details for customers or business locations within a database.",
+      "columns": [
+        {
+          "name": "address_id",
+          "description": "A unique identifier for each address."
+        },
+        {
+          "name": "address",
+          "description": "The primary street address."
+        },
+        {
+          "name": "address2",
+          "description": "An optional secondary address field, often used for apartment or suite numbers."
+        },
+        {
+          "name": "district",
+          "description": "A geographical region or area associated with the address."
+        },
+        {
+          "name": "city_id",
+          "description": "An identifier linking to the city associated with the address."
+        },
+        {
+          "name": "postal_code",
+          "description": "The postal code for the address, if applicable."
+        },
+        {
+          "name": "phone",
+          "description": "A phone number associated with the address, if available."
+        },
+        {
+          "name": "last_update",
+          "description": "The timestamp of the last update made to this address record."
+        }
+      ]
+    },
+    {
+      "table": "city",
+      "score": 1,
+      "reason": "No email or relevant data.",
+      "path": null,
+      "summary": "The city table stores information about various cities, including their unique identifiers and associated countries. It is typically used to retrieve city names and their relationships with countries for geographical analysis.",
+      "columns": [
+        {
+          "name": "city_id",
+          "description": "A unique identifier for each city."
+        },
+        {
+          "name": "city",
+          "description": "The name of the city."
+        },
+        {
+          "name": "country_id",
+          "description": "The identifier for the country the city is located in."
+        },
+        {
+          "name": "last_update",
+          "description": "The timestamp of when the city information was last updated."
+        }
+      ]
+    }
+  ]
+}

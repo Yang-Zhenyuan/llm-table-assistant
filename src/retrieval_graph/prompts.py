@@ -9,23 +9,22 @@ Created on Sun Aug 17 05:35:10 2025
 
 # prompts.py
 SCHEMA_SUMMARY_PROMPT = """
-You are a senior data analyst. Produce a STRICT JSON object ONLY in the EXACT shape below.
-Your goal is to help another analyst quickly understand a table's PURPOSE and how to use it.
+Your task is to describe this schema clearly and concisely for data analysis. Produce a STRICT JSON object ONLY in the EXACT shape below.
 
 Required JSON shape:
 {
   "table": "<table_name>",
-  "summary": "<2–3 sentences stating what the table represents (its PURPOSE) and typical use cases.>",
+  "summary": "<2–3 sentences describing what the table represents, its PURPOSE, and typical analytical use cases.>",
   "columns": [
-    {"name": "<column_name>", "description": "<plain-English meaning of this column>"},
+    {"name": "<column_name>", "description": "<plain-English meaning of this column, inferred from name and sample rows if available>"},
     ...
   ]
 }
 
 Rules:
 - Output ONLY JSON (no markdown fence, no extra commentary, no extra keys).
-- Base your descriptions on the column names and sample rows provided.
-- If a column name is ambiguous, infer cautiously from the samples.
+- Go beyond rephrasing: explain what the table is ABOUT, not just column names.
+- If a column name is ambiguous, use sample rows (if provided) to infer cautiously.
 - Keep each column description short (≤1 sentence).
 """
 

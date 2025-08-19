@@ -1,0 +1,152 @@
+{
+  "query": "Can u recommend some films for people who like action movies ?",
+  "model": "gpt-4o-mini",
+  "schemas": "outputs/task1/schema_summaries.json",
+  "choices": [
+    {
+      "table": "film",
+      "score": 5,
+      "reason": "Contains information about films, including titles and descriptions.",
+      "path": null,
+      "summary": "This table contains information about films available for rent, including their titles, descriptions, and various rental details. It is typically used to manage and display film inventory in a rental system.",
+      "columns": [
+        {
+          "name": "film_id",
+          "description": "A unique identifier for each film."
+        },
+        {
+          "name": "title",
+          "description": "The title of the film."
+        },
+        {
+          "name": "description",
+          "description": "A brief summary of the film's plot."
+        },
+        {
+          "name": "release_year",
+          "description": "The year the film was released."
+        },
+        {
+          "name": "language_id",
+          "description": "Identifier for the language in which the film is available."
+        },
+        {
+          "name": "original_language_id",
+          "description": "Identifier for the original language of the film, if different."
+        },
+        {
+          "name": "rental_duration",
+          "description": "The number of days the film can be rented."
+        },
+        {
+          "name": "rental_rate",
+          "description": "The cost to rent the film for the specified duration."
+        },
+        {
+          "name": "length",
+          "description": "The duration of the film in minutes."
+        },
+        {
+          "name": "replacement_cost",
+          "description": "The cost to replace the film if lost or damaged."
+        },
+        {
+          "name": "rating",
+          "description": "The film's content rating, indicating suitability for different audiences."
+        },
+        {
+          "name": "special_features",
+          "description": "Additional features included with the film, such as deleted scenes."
+        },
+        {
+          "name": "last_update",
+          "description": "The timestamp of when the film record was last updated."
+        }
+      ]
+    },
+    {
+      "table": "film_category",
+      "score": 4,
+      "reason": "Links films to categories, useful for filtering action movies.",
+      "path": null,
+      "summary": "This table links films to their respective categories, allowing for the organization and classification of films. It is typically used to query films by category or to analyze category distribution across a film database.",
+      "columns": [
+        {
+          "name": "film_id",
+          "description": "The unique identifier for a film."
+        },
+        {
+          "name": "category_id",
+          "description": "The unique identifier for a film category."
+        },
+        {
+          "name": "last_update",
+          "description": "The timestamp when the record was last updated."
+        }
+      ]
+    },
+    {
+      "table": "category",
+      "score": 4,
+      "reason": "Contains categories of content, including action movies.",
+      "path": null,
+      "summary": "This table contains information about different categories of content, such as movies or shows. It is typically used to organize and classify content for easier navigation and searching.",
+      "columns": [
+        {
+          "name": "category_id",
+          "description": "A unique identifier for each category."
+        },
+        {
+          "name": "name",
+          "description": "The name of the category."
+        },
+        {
+          "name": "last_update",
+          "description": "The date and time when the category information was last updated."
+        }
+      ]
+    },
+    {
+      "table": "film_actor",
+      "score": 3,
+      "reason": "Tracks actors in films, providing context for action films.",
+      "path": null,
+      "summary": "The film_actor table represents the relationship between actors and the films they have appeared in. It is typically used to track which actors are associated with which films and when this data was last updated.",
+      "columns": [
+        {
+          "name": "actor_id",
+          "description": "The unique identifier for an actor."
+        },
+        {
+          "name": "film_id",
+          "description": "The unique identifier for a film."
+        },
+        {
+          "name": "last_update",
+          "description": "The timestamp of the last update to this record."
+        }
+      ]
+    },
+    {
+      "table": "film_text",
+      "score": 3,
+      "reason": "Provides detailed information about films, including titles and descriptions.",
+      "path": null,
+      "summary": "This table contains detailed information about films, specifically their unique identifiers, titles, and descriptions. It is typically used to retrieve and display film-related data in applications and databases.",
+      "columns": [
+        {
+          "name": "film_id",
+          "description": "A unique identifier for each film."
+        },
+        {
+          "name": "title",
+          "description": "The name of the film."
+        },
+        {
+          "name": "description",
+          "description": "A brief summary or synopsis of the film."
+        }
+      ]
+    }
+  ]
+}

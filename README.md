@@ -15,6 +15,7 @@ llm_table_assistant/
 ├── data/
 │   └── sakila_xxx.csv #16 tables
 ├── outputs #results
+├── z_outputs-example # example of results
 ├── prepare_data.py #Convert the db file to a csv file
 ├── test_api.py  #Test to see if you are connected to LLM
 ├── task1_schema_summary.py
@@ -31,14 +32,15 @@ llm_table_assistant/
 
 -   Python: \<3.12.7\>
 
--   Required packages:
+- Required packages:
 
-    ``` bash
-    pip install langgraph langchain_community "langchain[openai]"
-    pip install langchain-openai python-dotenv
-    pip install pandas
-    pip install sqlite3-to-csv
-    ```
+  ``` bash
+  pip install langgraph langchain_community "langchain[openai]"
+  pip install langchain-openai python-dotenv
+  pip install pandas
+  pip install sqlite3-to-csv
+  pip install numpy
+  ```
 
 - Environment variables in `.env`:
 
@@ -89,6 +91,8 @@ All the prompts are stored in `llm_table_assistant/src/retrieval_graph/prompts.p
     
 - 📝 Example Output
 
+  ***For more details, you can visit this link***: `llm_table_assistant\z_outputs-example\task1`
+
   1. prompt1
 
      ```python
@@ -115,43 +119,45 @@ All the prompts are stored in `llm_table_assistant/src/retrieval_graph/prompts.p
      ```
 
      ```python
-     result:
-          {
-         "table": "actor",
-         "summary": "This table contains information about actors, including their unique identifiers and names. It is typically used to manage actor data in a film or entertainment database.",
-         "columns": [
-           {
-             "name": "actor_id",
-             "description": "A unique identifier for each actor."
-           },
-           {
-             "name": "first_name",
-             "description": "The first name of the actor."
-           },
-           {
-             "name": "last_name",
-             "description": "The last name of the actor."
-           },
-           {
-             "name": "last_update",
-             "description": "The timestamp of the last update made to the actor's information."
-           }
-         ]
-       }
+     llm_table_assistant\z_outputs-example\task1\schema_summaries_1.json
+     
+     "summary": "The actor table stores information about actors, including their names and the last time their records were updated. It is typically used in databases related to film or entertainment to manage actor data.",
      ```
 
   2. prompt 2
 
      ```python
+     SCHEMA_SUMMARY_PROMPT = """
+     Your task is to describe this schema clearly and concisely for data analysis. Produce a STRICT JSON object ONLY in the EXACT shape below.
+     
+     Required JSON shape:
+     {
+       "table": "<table_name>",
+       "summary": "<2–3 sentences describing what the table represents, its PURPOSE, and typical analytical use cases.>",
+       "columns": [
+         {"name": "<column_name>", "description": "<plain-English meaning of this column, inferred from name and sample rows if available>"},
+         ...
+       ]
+     }
+     
+     Rules:
+     - Output ONLY JSON (no markdown fence, no extra commentary, no extra keys).
+     - Go beyond rephrasing: explain what the table is ABOUT, not just column names.
+     - If a column name is ambiguous, use sample rows (if provided) to infer cautiously.
+     - Keep each column description short (≤1 sentence).
+     """
      ```
 
+     ```python
+     llm_table_assistant\z_outputs-example\task1\schema_summaries_2.json
      
+     "summary": "The 'actor' table contains information about actors in a database, including their unique identifiers and names. This table is used for managing and analyzing actor data in film and entertainment applications, facilitating queries related to casting and performance records.",
+     ```
 
 ### Task 2
 
--   **Goal**: Match a user query to the most relevant tables using Task
-    1 summaries.
-
+-   **Goal**: Match a user query to the most relevant tables using Task1' summaries.
+    
 -   **Run**:
 
     ``` bash
@@ -190,7 +196,7 @@ All the prompts are stored in `llm_table_assistant/src/retrieval_graph/prompts.p
     
        5. **Normalize results**
     
-       6. **Outputs**
+       6. **Outputs**: `llm_table_assistant\z_outputs-example\task2-3`
 
 ### Task 3
 
@@ -249,14 +255,6 @@ All the prompts are stored in `llm_table_assistant/src/retrieval_graph/prompts.p
       
       2. Even knowing the language is not sufficient to decide whether a film is suitable for Chinese viewers.
       ```
-
-------------------------------------------------------------------------
-
-## 📌 Method Explanation (to be filled by you)
-
--   Task 1: \<描述你的方法，例如：是否加入样例行，如何约束格式\>\
--   Task 2: \<描述检索方法，例如：embedding + cosine，相似度+LLM重排\>\
--   Task 3: `<描述评估提示与打分准则>`{=html}
 
 ------------------------------------------------------------------------
 
