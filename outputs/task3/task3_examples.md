@@ -6,34 +6,34 @@
 ## Table: `film`
 - **Task3 rating:** 2  ❌ not sufficient
 - **Task2 score:** 5
-- **Why:** The table contains a 'length' column, which is necessary to determine film durations.; The 'language_id' could potentially help filter for Italian films.
-- **Missing info:** Specific language identification for Italian films; Films longer than 120 minutes (no relevant length data provided in samples)
-- **Irrelevant info:** Columns like description, rental specifics, and special features do not pertain to the query.
+- **Why:** Table contains information about film lengths, which is relevant to the query.; Language field exists but does not specify if films are in Italian.
+- **Missing info:** Filter for language to specify Italian films; Length threshold of greater than 120 minutes
+- **Irrelevant info:** Film descriptions and rental specifics are not pertinent to the query.
 
 ## Table: `language`
 - **Task3 rating:** 1  ❌ not sufficient
 - **Task2 score:** 4
-- **Why:** The table only contains information about languages, not films.; It does not include any duration or film-related data.
-- **Missing info:** Film titles; Film durations; Language of the films
+- **Why:** The table only contains language information.; It does not include any film duration data.; It lacks any film-related attributes or filters.
+- **Missing info:** film duration; film title; film language association
 - **Irrelevant info:** language_id; name; last_update
 
 ## Table: `film_text`
 - **Task3 rating:** 2  ❌ not sufficient
 - **Task2 score:** 3
-- **Why:** The table contains film titles and descriptions but lacks duration information.; It does not specify language, making it impossible to filter for Italian films.
-- **Missing info:** duration; language
+- **Why:** The table contains film titles and descriptions, which are related to films.; It does not provide any information about the film duration or language.
+- **Missing info:** film duration; language
 - **Irrelevant info:** description
 
 ## Table: `film_actor`
 - **Task3 rating:** 1  ❌ not sufficient
 - **Task2 score:** 2
-- **Why:** The table focuses on the relationship between actors and films, not on film attributes like duration or language.; There are no columns related to film duration or language.
+- **Why:** Table only contains actor and film relationships.; Does not include film duration or language information.
 - **Missing info:** film duration; film language
-- **Irrelevant info:** actor_id; film_id; last_update
+- **Irrelevant info:** actor_id; last_update
 
 ## Table: `film_category`
 - **Task3 rating:** 1  ❌ not sufficient
 - **Task2 score:** 2
-- **Why:** The table does not contain information about film duration.; It does not include language details which are essential for filtering Italian films.; It solely relates films to categories without any relevant film attributes.
-- **Missing info:** film duration; film language
+- **Why:** The table links films to categories but does not contain any information about film length.; It lacks any references to language, specifically Italian, which is required for the query.
+- **Missing info:** film length; language
 - **Irrelevant info:** category_id; last_update
