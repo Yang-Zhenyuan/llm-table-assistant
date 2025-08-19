@@ -32,31 +32,26 @@ try:
     from src.retrieval_graph.utils import load_chat_model
 except Exception:
     from utils import load_chat_model
-
-
 import pandas as pd
+
 
 
 def read_json(path: str) -> Any:
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
-
 def write_text(path: str, s: str) -> None:
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         f.write(s)
-
 
 def append_jsonl(path: str, obj: Any) -> None:
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     with open(path, "a", encoding="utf-8") as f:
         f.write(json.dumps(obj, ensure_ascii=False) + "\n")
 
-
 def norm_name(x: str) -> str:
     return re.sub(r"[^a-z0-9]+", "_", x.lower()).strip("_")
-
 
 def build_table_index(csv_dir: str) -> Dict[str, str]:
     # Map normalized table_name -> csv path 'Sakila_actor.csv' -> 'sakila_actor'
@@ -66,8 +61,17 @@ def build_table_index(csv_dir: str) -> Dict[str, str]:
         idx[stem] = str(p)
     return idx
 
-
 def sample_rows(csv_path: str, n: int = 3) -> List[Dict[str, Any]]:
+    """
+    Extract up to n sample rows (default = 3) from a CSV file.
+    - Reads the CSV with pandas.
+    - Always takes the first n rows (deterministic, not random).
+    - Converts values to strings:
+        NaN values are replaced with "".
+        Strings longer than 60 characters are truncated and appended with "...".
+    - Returns a list of row dictionaries, with column names as keys.
+    - On failure, returns a single dictionary containing a warning.
+    """
     try:
         df = pd.read_csv(csv_path)
         # head n (no random to keep determinism)
@@ -86,28 +90,6 @@ def sample_rows(csv_path: str, n: int = 3) -> List[Dict[str, Any]]:
         return [{"_warning": f"sample_rows_failed: {e}"}]
 
 
-# EVAL_SYSTEM_PROMPT = """You are a rigorous data analyst.
-# Judge how relevant ONE candidate table is to the given user query.
-
-# Scoring scale:
-# 5 = Fully aligned. This table alone contains the key fields needed to answer the query.
-# 4 = Mostly aligned. It answers the main intent but might miss minor constraints/fields.
-# 3 = Partially related. Provides context/partial info; likely needs joins with other tables.
-# 2 = Weakly related. Only tangentially related to the topic.
-# 1 = Irrelevant.
-
-# Instructions:
-# - Base your decision on the provided table summary, column list, and the 3 sample rows.
-# - Think about whether the table has the exact entities, filters, and measures needed.
-# - Be concise and concrete in explanations.
-# - Output STRICT JSON ONLY with keys:
-#   { "query": str, "table": str, "relevance_rating": 1-5, "sufficient_to_answer": true/false,
-#     "why": [short bullets], "missing_info": [fields/constraints not found],
-#     "irrelevant_info": [fields that are off-topic for this query] }
-# - No markdown fences, no extra keys, no comments.
-# """
-# from src.retrieval_graph.prompts import EVAL_PROMPT
-
 from src.retrieval_graph.prompts import EVAL_PROMPT
 
 def call_llm_eval(model: str, query: str, table: str,
@@ -121,27 +103,27 @@ def call_llm_eval(model: str, query: str, table: str,
     if llm is None:
         raise RuntimeError("Failed to load chat model. Check utils.load_chat_model / OPENAI_* envs.")
 
-    # 2) 压缩负载，控制 token
+    # 压缩负载，控制 token
     col_names = [c["name"] if isinstance(c, dict) and "name" in c else str(c)
                  for c in (columns or [])][:64]
 
     payload: Dict[str, Any] = {
         "query": query,
         "table": table,
-        "table_summary": (summary or "")[:800],  # 摘要截断
-        "columns": col_names[:40],               # 只传前 40 列名
-        "samples": samples[:3],                  # 只传 3 行样例
+        "table_summary": (summary or "")[:800],  # truncate summary to max 800 characters
+        "columns": col_names[:40],               # include only the first 40 column names
+        "samples": samples[:3],                  # include only the first 3 sample rows
     }
     user_content = json.dumps(payload, ensure_ascii=False)
 
-    # 3) 直接用 llm.invoke(messages)（与 Task1 一致）
+    #Directly call llm.invoke(messages) (same approach as in Task 1)
     messages = [
         {"role": "system", "content": EVAL_PROMPT},
         {"role": "user", "content": user_content},
     ]
     resp = llm.invoke(messages)
 
-    # 4) 解析输出
+    #Parse the LLM output
     txt = getattr(resp, "content", str(resp)).strip()
     try:
         data = json.loads(txt)
@@ -151,7 +133,7 @@ def call_llm_eval(model: str, query: str, table: str,
             raise ValueError(f"LLM did not return JSON. Raw:\n{txt}")
         data = json.loads(m.group(0))
 
-    # 5) 补默认键，避免缺字段
+    # Add default keys to avoid missing fields
     data.setdefault("query", query)
     data.setdefault("table", table)
     data.setdefault("relevance_rating", 0)
@@ -164,9 +146,12 @@ def call_llm_eval(model: str, query: str, table: str,
 
 
 def spearman(a: List[float], b: List[float]) -> Optional[float]:
-    """Simple Spearman correlation (no SciPy)."""
+    """
+    Simple Spearman correlation
+    """
     if len(a) != len(b) or len(a) < 2:
         return None
+    # Convert values to ranks
     def ranks(x):
         order = sorted(range(len(x)), key=lambda i: x[i])
         r = [0]*len(x)
@@ -184,7 +169,11 @@ def write_reflection(out_reflect: str,
                      scores_t2: List[float],
                      ratings_t3: List[float]) -> None:
     """
-    生成 Task3 的 reflection 文件，包括 Top-1 一致性和 Spearman 秩相关。
+    Generate the Task 3 reflection file.
+    Contents include:
+      - Top-1 consistency: whether the top-ranked table in Task 2
+    matches the highest-rated table in Task 3.
+      - Spearman rank correlation between Task 2 scores and Task 3 ratings.
     """
     lines_ref: List[str] = ["# Task 3 – Reflection\n"]
 
@@ -220,6 +209,20 @@ def write_reflection(out_reflect: str,
 
 
 def main():
+    """
+    Define and configure command-line arguments for Task 3:
+      -results        Path to Task 2 output JSON (query + candidate tables)
+                       (default: outputs/task2/task2_llm_results.json)
+      -schemas        Path to Task 1 schema summaries JSON
+                       (default: outputs/task1/schema_summaries.json)
+      -csv-dir        Folder containing CSV files (used to fetch sample rows)
+                       (default: data)
+      -model          OpenAI model name 
+                       (default: from OPENAI_MODEL env var or "gpt-4o-mini")
+      -sample-rows    Number of sample rows per table to include in the evaluation
+                       (default: 3)
+    """
+
     parser = argparse.ArgumentParser(description="Task 3: LLM-based evaluation of Task 2 tables")
     parser.add_argument("--results", type=str,
                         default=os.path.join("outputs", "task2", "task2_llm_results.json"),
@@ -282,24 +285,29 @@ def main():
     print(f"Model: {model}")
     print(f"Candidates from Task2: {len(choices)}")
 
-    #make .md document
+    # Collect containers for final metrics and markdown rendering
     ratings_t3: List[float] = []
     scores_t2: List[float] = []
     lines_md: List[str] = [f"# Task 3 – LLM Evaluation for Query\n\n**Query:** {query}\n\n"]
     pairs: List[Tuple[str, float, float]] = []   # (table, task2_score, task3_rating)
 
-    
+    # Timestamp for evaluation records
     now = datetime.datetime.now().isoformat(timespec="seconds")
     for c in choices:
         tbl = c.get("table") or ""
         t2_score = c.get("score", None)
-        # lookup schema
+        # Look up schema summary/columns from Task 1
         key = norm_name(tbl)
         sch = by_table.get(key, {})
         summary = sch.get("summary") or ""
         columns = sch.get("columns") or []
 
-        # sample rows
+
+        """
+        Fetch sample rows from CSV (best-effort):
+            1. direct hit via normalized key
+            2. fallback: try suffix/prefix-compatible keys (handles slight naming mismatches)
+        """
         csv_path = csv_index.get(key)
         if not csv_path:
             # fallback: try raw table string against index
@@ -309,7 +317,7 @@ def main():
                     break
         samples = sample_rows(csv_path, n=args.sample_rows) if csv_path else [{"_warning": "csv_not_found"}]
 
-        # call llm
+        # Call LLM to evaluate this single table against the query
         data = call_llm_eval(model, query, tbl, summary, columns, samples)
         data.update({
             "model_name": model,
@@ -319,7 +327,7 @@ def main():
         })
         append_jsonl(out_jsonl, data)
 
-        # For MD
+        # Build Markdown section for this table
         lines_md.append(f"## Table: `{tbl}`")
         lines_md.append(f"- **Task3 rating:** {data.get('relevance_rating')}  "
                         f"{'✅ sufficient' if data.get('sufficient_to_answer') else '❌ not sufficient'}")
@@ -336,11 +344,11 @@ def main():
             lines_md.append(f"- **Irrelevant info:** " + "; ".join(str(x) for x in irr))
         lines_md.append("")
 
-        # For reflection
+        # Aggregate numbers for reflection (Spearman / Top-1 checks)
         if isinstance(data.get("relevance_rating"), (int, float)) and isinstance(t2_score, (int, float)):
             ratings_t3.append(float(data["relevance_rating"]))
             scores_t2.append(float(t2_score))
-            # 记录每个表的 (表名, Task2 分数, Task3 评分)
+            # Record (table, Task2 score, Task3 rating)
             pairs.append((tbl, float(t2_score) if isinstance(t2_score, (int, float)) else 0.0,
               float(data.get("relevance_rating", 0.0))))
 
@@ -349,7 +357,7 @@ def main():
     write_text(out_md, "\n".join(lines_md))
 
     # # Quick numeric reflection
-    # Reflection 输出
+    # Reflection output
     write_reflection(out_reflect, choices, pairs, scores_t2, ratings_t3)
 
 

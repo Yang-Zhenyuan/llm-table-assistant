@@ -1,0 +1,152 @@
+{
+  "query": "films longer than 120 minutes in Italian",
+  "model": "gpt-4o-mini",
+  "schemas": "outputs/task1/schema_summaries.json",
+  "choices": [
+    {
+      "table": "film",
+      "score": 5,
+      "reason": "Contains length and language details for films.",
+      "path": null,
+      "summary": "The film table contains information about various movies available for rental, including their details such as title, description, and rental specifics. It is typically used for managing film inventories and providing rental options to customers.",
+      "columns": [
+        {
+          "name": "film_id",
+          "description": "A unique identifier for each film."
+        },
+        {
+          "name": "title",
+          "description": "The name of the film."
+        },
+        {
+          "name": "description",
+          "description": "A brief synopsis of the film's plot."
+        },
+        {
+          "name": "release_year",
+          "description": "The year the film was released."
+        },
+        {
+          "name": "language_id",
+          "description": "An identifier for the language in which the film is available."
+        },
+        {
+          "name": "original_language_id",
+          "description": "An identifier for the film's original language, if different."
+        },
+        {
+          "name": "rental_duration",
+          "description": "The duration, in days, for which the film can be rented."
+        },
+        {
+          "name": "rental_rate",
+          "description": "The cost to rent the film for the specified duration."
+        },
+        {
+          "name": "length",
+          "description": "The total runtime of the film in minutes."
+        },
+        {
+          "name": "replacement_cost",
+          "description": "The cost to replace the film if it is lost or damaged."
+        },
+        {
+          "name": "rating",
+          "description": "The film's rating indicating suitability for different audiences."
+        },
+        {
+          "name": "special_features",
+          "description": "Additional features included with the film, such as deleted scenes."
+        },
+        {
+          "name": "last_update",
+          "description": "The date and time when the film record was last updated."
+        }
+      ]
+    },
+    {
+      "table": "language",
+      "score": 4,
+      "reason": "Provides language information relevant to film data.",
+      "path": null,
+      "summary": "The 'language' table contains information about various languages used in the system. It is typically used to manage and reference different language options available for content localization.",
+      "columns": [
+        {
+          "name": "language_id",
+          "description": "A unique identifier for each language."
+        },
+        {
+          "name": "name",
+          "description": "The name of the language."
+        },
+        {
+          "name": "last_update",
+          "description": "The timestamp of the last update made to the language record."
+        }
+      ]
+    },
+    {
+      "table": "film_text",
+      "score": 3,
+      "reason": "Includes film titles and descriptions, relevant context.",
+      "path": null,
+      "summary": "The film_text table contains detailed information about films, including their titles and descriptions. It is typically used to retrieve or display film data in applications or reports.",
+      "columns": [
+        {
+          "name": "film_id",
+          "description": "A unique identifier for each film."
+        },
+        {
+          "name": "title",
+          "description": "The title of the film."
+        },
+        {
+          "name": "description",
+          "description": "A brief summary or overview of the film's plot."
+        }
+      ]
+    },
+    {
+      "table": "film_actor",
+      "score": 2,
+      "reason": "Links actors to films but lacks length and language data.",
+      "path": null,
+      "summary": "The film_actor table represents the relationship between actors and the films they have participated in. It is typically used to analyze actor filmographies and track their involvement in various movies.",
+      "columns": [
+        {
+          "name": "actor_id",
+          "description": "A unique identifier for each actor."
+        },
+        {
+          "name": "film_id",
+          "description": "A unique identifier for each film."
+        },
+        {
+          "name": "last_update",
+          "description": "The timestamp of the last update to this record."
+        }
+      ]
+    },
+    {
+      "table": "film_category",
+      "score": 2,
+      "reason": "Connects films to categories, indirect relevance.",
+      "path": null,
+      "summary": "This table links films to their respective categories, defining the genres or classifications each film belongs to. It is typically used to filter or group films by category in a database or application.",
+      "columns": [
+        {
+          "name": "film_id",
+          "description": "The unique identifier for each film."
+        },
+        {
+          "name": "category_id",
+          "description": "The unique identifier for the category to which the film belongs."
+        },
+        {
+          "name": "last_update",
+          "description": "The timestamp of the last update made to this record."
+        }
+      ]
+    }
+  ]
+}

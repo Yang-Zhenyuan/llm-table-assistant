@@ -62,6 +62,9 @@
 
 ## Query1
 
+- queries 1-2 are  vague queries
+- queries 3-4 are  specific queries
+
 1. query
 
    ```python
@@ -125,4 +128,11 @@
    **Why:** Table includes 'release_year' which is essential for the query.; Contains multiple films released in 2006, providing direct answers.
    ```
 
-   
+
+## Conclusion
+
+The LLM did identify the most relevant table, but its final judgment may be inaccurate, especially for vague queries. For example, when asked to find “films suitable for Chinese people,” it correctly pointed to the film table but did not assign the highest score (5). In my view, there are two reasons:
+
+1. The language_id field in the film table is stored as a numeric code, which must be joined with the separate language table. Relying on language_id alone cannot determine the actual language.
+
+2. Even knowing the language is not sufficient to decide whether a film is suitable for Chinese viewers.

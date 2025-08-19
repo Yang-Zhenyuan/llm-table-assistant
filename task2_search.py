@@ -29,7 +29,7 @@ from openai import OpenAI
 try:
     from src.retrieval_graph.utils import load_chat_model
 except ImportError:
-    from utils import load_chat_model  # 兼容直接在根目录运行
+    from utils import load_chat_model  # fallback for running directly from the project root
 
 
 def read_json(path: str) -> Any:
@@ -41,17 +41,24 @@ def write_json(path: str, obj: Any) -> None:
     with open(path, "w", encoding="utf-8") as f:
         json.dump(obj, f, ensure_ascii=False, indent=2)
 
-# 取每个列的 name，最多显示 max_cols 个（默认 12）。
-# 超过就用 "..." 代替，避免 prompt 太长。
+
 def compact_columns(columns: List[Dict[str, str]], max_cols: int = 12) -> str:
+    """
+    Extract column names with a maximum of `max_cols` (default 12).
+    If there are more, truncate and append "..." to keep the prompt concise.
+    """
     names = [c.get("name", "") for c in columns if isinstance(c, dict)]
     if len(names) > max_cols:
         names = names[:max_cols] + ["..."]
     return ", ".join([n for n in names if n])
 
-# 每张表压缩成一个简短描述，包含：表名、路径（如果有）、摘要（≤320字符）、前 16 个列名。
-# 这些字符串会拼进 LLM prompt 里。
+
 def build_table_snippet(tbl: Dict[str, Any], max_summary_len: int = 320) -> str:
+    """
+    Compress each table into a short description including:
+        table name, path (if available), summary (≤320 chars), and the first 16 column names.
+    These snippets are concatenated into the LLM prompt.
+    """
     name = tbl.get("table") or tbl.get("name") or "unknown_table"
     path = tbl.get("path") or ""
     summ = (tbl.get("summary") or "").strip()
@@ -69,29 +76,19 @@ def build_table_snippet(tbl: Dict[str, Any], max_summary_len: int = 320) -> str:
     return "\n".join(parts)
 
 
-# SYSTEM_PROMPT = """You are a meticulous data analyst.
-# Given a user query and a list of candidate table summaries, select the K most relevant tables.
-
-# Return ONLY a strict JSON object with this shape:
-# {
-#   "query": "<echo query>",
-#   "choices": [
-#     {"table": "<table_name>", "score": <1-5>, "reason": "<short phrase, <=15 words>"},
-#     ...
-#   ]
-# }
-
-# Rules:
-# - Choose exactly K entries in "choices".
-# - Higher score = more relevant.
-# - Keep reasons short and specific (column names or key fields help).
-# - Do NOT invent tables that were not provided.
-# - Prefer tables whose summaries/columns directly support the query constraints.
-# """
 from src.retrieval_graph.prompts import TABLE_MATCH_PROMPT
 
-
 def call_llm_rank(query: str, table_snippets: List[str], k: int, model: str) -> Dict[str, Any]:
+    """
+    Use the LLM to rank candidate tables for a given query.
+        - query: the user input question
+        - table_snippets: compressed descriptions of tables (from build_table_snippet)
+        - k: number of top tables to return
+        - model: model name to load via load_chat_model
+    Returns:
+        Parsed JSON object with table scores and reasons.
+    """
+    
     if OpenAI is None:
         raise RuntimeError("openai package not installed. Run: pip install openai")
 
@@ -116,7 +113,16 @@ def call_llm_rank(query: str, table_snippets: List[str], k: int, model: str) -> 
 
 
 def main():
-    # 从命令行解析参数：查询语句、Task1 输出文件路径、选 K 个表、模型名、候选表数量上限
+    """
+    Define and configure command-line arguments for Task 2:
+    This parser allows the user to provide:
+      query              Natural language query (positional argument)
+      --schemas          Path to Task 1 schema summaries JSON (default: outputs/task1/schema_summaries.json)
+      --k                How many tables to select (default: 5)
+      --model            OpenAI chat model name (default: from OPENAI_MODEL env var or "gpt-4o-mini")
+      --limit            Max number of candidate tables to pass into the LLM (default: 30)
+    """
+    
     parser = argparse.ArgumentParser(description="Task 2 (ChatGPT): Rank tables using Task 1 summaries + LLM")
     parser.add_argument("query", type=str, help="Natural language query")
     parser.add_argument("--schemas", type=str, default="outputs/task1/schema_summaries.json",
@@ -126,10 +132,11 @@ def main():
                         help="OpenAI chat model (default from OPENAI_MODEL or 'gpt-4o-mini')")
     parser.add_argument("--limit", type=int, default=30, help="Max candidates to show the LLM")
     args = parser.parse_args()
-
+    
+    # Validate schema summaries input
     if not os.path.exists(args.schemas):
         raise FileNotFoundError(f"Schema summaries not found: {args.schemas}")
-    # 读取 schema 摘要
+        
     summaries = read_json(args.schemas)
     if not isinstance(summaries, list) or not summaries:
         raise ValueError("Schema summaries JSON must be a non-empty list")
@@ -138,10 +145,12 @@ def main():
     snippets = [build_table_snippet(s) for s in summaries[: args.limit]]
 
     result = call_llm_rank(args.query, snippets, args.k, args.model)
-
-    # Normalize output
-    # 从 LLM 返回的结果提取出表名/分数/理由。 
-    # 在原始 summaries 里找回该表的完整 path/summary/columns，方便后续使用。
+    
+    """
+    Normalize the LLM output:
+        - Extract table name / score / reason from the LLM response.
+        - Look up the original summary record to recover path / full summary / full columns for downstream use.
+    """
     choices = result.get("choices") or []
     ranked = []
     for c in choices:
