@@ -61,7 +61,7 @@ llm_table_assistant/
 
 ## 📝 Task Overview
 
-All the prompts are stored in `llm_table_assistant/src/retrieval_graph/prompts.py`.
+All the prompts are stored in `llm_table_assistant\src\retrieval_graph\prompts.py`.
 
 ### Task 1
 
@@ -169,7 +169,7 @@ All the prompts are stored in `llm_table_assistant/src/retrieval_graph/prompts.p
 
     1. Output examples: natural language query -> matched tables &&  sentence embeddings
     
-       The output examples are located in `llm_table_assistant/z_outputs-example/task2`.
+       The output examples are located in `llm_table_assistant\z_outputs-example\task2`.
     
     2. Method explanation
     
