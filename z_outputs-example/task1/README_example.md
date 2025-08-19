@@ -1,6 +1,11 @@
 # Phrasing styles
 
+**<u>In schema_summaries, "summary" gives a short description of what the whole table is about and how it is used.</u>**
+
 I tried two different phrasing styles
+
+- **schema_summaries_1 **gave a short and accurate summary, closely matching the table structure (e.g., names and last update).
+- **schema_summaries_2 ** produced a longer summary with extra details (e.g., identifiers, use in casting queries), but sometimes added information not directly in the schema.
 
 ## schema_summaries_1
 

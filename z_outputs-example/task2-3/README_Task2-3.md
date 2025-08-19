@@ -1,4 +1,64 @@
-# Task2-3
+# Documents_description
+
+1. Task2
+
+   - task2_llm_results.json
+
+     ```html
+     query: "films suitable for Chinese people" → the user’s question.
+     
+     model: "gpt-4o-mini" → the LLM used.
+     
+     table: "film" → the matched table name.
+     
+     score: 5 → relevance score (higher means more relevant).
+     
+     reason: "Directly provides film titles and details." → why it was chosen.
+     
+     summary: Explains what the table is about (film information for rental systems).
+     
+     columns: List of fields in the table, e.g.:
+     
+     film_id: unique film identifier.
+     
+     title: the film’s title.
+     
+     description: a short summary of the film.
+     
+     release_year: the year the film was released.
+     ```
+
+2. Task3
+
+   - task3_eval.jsonl
+
+     *This file is used to create **`task3_examples.md`** and **`task3_reflection.md`**.*
+
+     ```python
+     This file mainly stores the Task 2 relevance scores and the Task 3 evaluation ratings.
+     
+     why explains why a table is considered relevant or not.
+     
+     missing_info lists the information that is missing, which makes the table insufficient to fully answer the query.
+     
+     irrelevant_info highlights the attributes in the table that are unrelated to the query.
+     ```
+
+   - task3_examples.md
+
+     *Visualize the contents of the `task3_eval.jsonl` file.*
+
+   - task3_reflection.md
+
+     - top1 judgment: If the top-1 most relevant table returned by Task 2 and Task 3 is the same, return **Yes**; otherwise, return **No**.
+
+     - Spearman Correlation Coefficient
+
+     ![image-20250819222014352](spearman.png)
+
+     
+
+# Example_Task2-3
 
 ## Query1
 

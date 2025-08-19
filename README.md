@@ -91,7 +91,7 @@ All the prompts are stored in `llm_table_assistant/src/retrieval_graph/prompts.p
     
 - 📝 Example Output
 
-  ***For more details, you can visit this link***: `llm_table_assistant\z_outputs-example\task1`
+  ***For more details, you can visit this***: `llm_table_assistant\z_outputs-example\task1`
 
   1. prompt1
 
@@ -243,7 +243,6 @@ All the prompts are stored in `llm_table_assistant/src/retrieval_graph/prompts.p
       #code:llm_table_assistant\task3_eval.py
       #result:llm_table_assistant\outputs\task3\task3_eval&example		rating and explanations
       #		llm_table_assistant\outputs\task3\task3_reflection		Show whether the most relevant table selected by Task 2 and Task 3 is the same, and compare their relevance scores across the entire set of K candidate tables. 
-      
       ```
     
     - Reflection
