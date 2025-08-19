@@ -257,7 +257,7 @@ All the prompts are stored in `llm_table_assistant/src/retrieval_graph/prompts.p
 
 ------------------------------------------------------------------------
 
-## 🚀 Key Insights & Challenges (to be filled by you)
+## 🚀 Key Insights & Challenges
 
 - **Insights:** 
 
