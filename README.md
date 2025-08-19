@@ -24,6 +24,7 @@ llm_table_assistant/
 └── src/
     └── retrieval_graph/
         ├── prompts.py #contain prompts
+        ├── embedding.py
         └── utils.py #load llm
 
 ```
@@ -166,11 +167,13 @@ All the prompts are stored in `llm_table_assistant/src/retrieval_graph/prompts.p
 
 -   **Deliverables**:
 
-    1. Output examples: natural language query -> matched tables
+    1. Output examples: natural language query -> matched tables &&  sentence embeddings
     
        The output examples are located in `llm_table_assistant/z_outputs-example/task2`.
     
     2. Method explanation
+    
+       **llm**
     
        1. load task1's result schema_summaries.json, as resources of tables.
     
@@ -197,6 +200,22 @@ All the prompts are stored in `llm_table_assistant/src/retrieval_graph/prompts.p
        5. **Normalize results**
     
        6. **Outputs**: `llm_table_assistant\z_outputs-example\task2-3`
+    
+       **embedding**
+    
+       1. Load schema summaries from Task 1
+    
+       2. Build textual representations for each table
+    
+       3. Generate embeddings with OpenAI API
+    
+       4. Compute cosine similarity
+    
+       5. Rank and select top-k tables
+    
+       6. outputs: `llm_table_assistant\z_outputs-example\task2-3\E_query`
+    
+          
 
 ### Task 3
 
@@ -242,7 +261,7 @@ All the prompts are stored in `llm_table_assistant/src/retrieval_graph/prompts.p
       ```python
       #code:llm_table_assistant\task3_eval.py
       #result:llm_table_assistant\outputs\task3\task3_eval&example		rating and explanations
-      #		llm_table_assistant\outputs\task3\task3_reflection		Show whether the most relevant table selected by Task 2 and Task 3 is the same, and compare their relevance scores across the entire set of K candidate tables. 
+      #		llm_table_assistant\outputs\task3\task3_reflection		Show whether the top-ranked table selected by Task 2 and Task 3 is the same, and measure the correlation between their scores across all K candidate tables. 
       ```
     
     - Reflection
@@ -257,7 +276,7 @@ All the prompts are stored in `llm_table_assistant/src/retrieval_graph/prompts.p
 
 ------------------------------------------------------------------------
 
-## 🚀 Key Insights & Challenges (to be filled by you)
+## 🚀 Key Insights & Challenges
 
 - **Insights:** 
 
@@ -268,8 +287,9 @@ All the prompts are stored in `llm_table_assistant/src/retrieval_graph/prompts.p
 - **Challenges:** 
 
   - **File I/O details** (JSON/JSONL/CSV) required careful handling.
-
-  Going forward: factor shared **I/O helpers**, **model loader**, and **path/logging utilities** into a small common module to remove duplication and make future tasks easier to extend.
+  - Implementing **embedding** functionality took extra time.
+  
+  Going forward: factor shared **I/O helpers**, **model loader**, and **path/logging utilities** into a small common module to remove duplication and make future tasks easier to extend. Moreover, I think **embeddings and Graph Neural Networks (GNNs)** can be combined to address the relationship across multiple tables, enabling more accurate reasoning and matching.
 
 ------------------------------------------------------------------------
 
@@ -287,8 +307,10 @@ pip install langchain-openai python-dotenv pandas
 python task1_schema_summary.py
 
 # 4. Run Task 2
+#llm
 python task2_search.py "find an actor whose last name is GUINESS" --k 5
-
+#embedding
+	#python task2_search.py "find an actor whose last name is GUINESS" --mode embedding --k 5
 # 5. Run Task 3
 python task3_eval.py
 ```

@@ -1,0 +1,28 @@
+{
+  "query": "find an actor whose last name is GUINESS",
+  "mode": "embedding",
+  "embedding_model": "text-embedding-3-small",
+  "schemas": "outputs/task1/schema_summaries.json",
+  "choices": [
+    {
+      "table": "actor",
+      "score": 0.386854923993724
+    },
+    {
+      "table": "film_actor",
+      "score": 0.306478151907557
+    },
+    {
+      "table": "film_category",
+      "score": 0.15728036501986958
+    },
+    {
+      "table": "film",
+      "score": 0.13563802769294184
+    },
+    {
+      "table": "film_text",
+      "score": 0.13243153582189102
+    }
+  ]
+}

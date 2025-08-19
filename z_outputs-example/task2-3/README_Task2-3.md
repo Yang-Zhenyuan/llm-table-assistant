@@ -30,6 +30,8 @@
 
 2. Task3
 
+   *Task3 does not search for new tables by itself; it only evaluates the candidate tables provided by Task2 and judges whether each one is sufficient to answer the query.*
+
    - task3_eval.jsonl
 
      *This file is used to create **`task3_examples.md`** and **`task3_reflection.md`**.*
@@ -79,6 +81,8 @@
    - **Missing info:** Cultural context, themes, or tags indicating suitability for Chinese people; Language preferences beyond just language IDs
    - **Irrelevant info:** Rental details like rental duration and rental rate; Special features that might not relate to cultural suitability
    ```
+   
+   *Task3 does not search for new tables by itself; it only evaluates the candidate tables provided by Task2 and judges whether each one is sufficient to answer the query.*
 
 ## Query2
 
@@ -129,6 +133,24 @@
    ```
 
 
+
+## E_Query
+
+1. query
+
+```python
+python task2_search.py "find an actor whose last name is GUINESS" --mode embedding --k 5
+```
+
+2. task3_result
+
+```python
+- **Task3 rating:** 5  ✅ sufficient
+- **Task2 score:** 0.386854923993724
+- **Why:** Table contains the last name field needed to find 'GUINESS'.; Provides first name for clarity on the actor's identity.; Contains unique identifiers for potential further references.
+```
+
+
 ## Conclusion
 
 The LLM did identify the most relevant table, but its final judgment may be inaccurate, especially for vague queries. For example, when asked to find “films suitable for Chinese people,” it correctly pointed to the film table but did not assign the highest score (5). In my view, there are two reasons:
@@ -136,3 +158,4 @@ The LLM did identify the most relevant table, but its final judgment may be inac
 1. The language_id field in the film table is stored as a numeric code, which must be joined with the separate language table. Relying on language_id alone cannot determine the actual language.
 
 2. Even knowing the language is not sufficient to decide whether a film is suitable for Chinese viewers.
+

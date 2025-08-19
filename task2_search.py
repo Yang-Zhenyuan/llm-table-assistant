@@ -31,6 +31,8 @@ try:
 except ImportError:
     from utils import load_chat_model  # fallback for running directly from the project root
 
+from src.retrieval_graph.embedding import embed_rank_tables
+import math
 
 def read_json(path: str) -> Any:
     with open(path, "r", encoding="utf-8") as f:
@@ -131,7 +133,15 @@ def main():
     parser.add_argument("--model", type=str, default=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
                         help="OpenAI chat model (default from OPENAI_MODEL or 'gpt-4o-mini')")
     parser.add_argument("--limit", type=int, default=30, help="Max candidates to show the LLM")
+    #embedding
+    parser.add_argument("--mode", type=str, default="llm",
+                    choices=["llm", "embedding"],
+                    help="Ranking mode: 'llm' (default) or 'embedding'")
+    parser.add_argument("--embedding-model", type=str, default="text-embedding-3-small",
+                    help="Embedding model name")
     args = parser.parse_args()
+    
+    
     
     # Validate schema summaries input
     if not os.path.exists(args.schemas):
@@ -140,6 +150,38 @@ def main():
     summaries = read_json(args.schemas)
     if not isinstance(summaries, list) or not summaries:
         raise ValueError("Schema summaries JSON must be a non-empty list")
+
+    if args.mode == "embedding":
+        ranked = embed_rank_tables(
+            summaries=summaries,
+            query=args.query,
+            embedding_model=args.embedding_model,
+            k=args.k,
+        )
+
+        print("=" * 80)
+        print(f"Query: {args.query}")
+        print(f"Mode: embedding")
+        print(f"Embedding model: {args.embedding_model}")
+        print(f"Schemas: {args.schemas}")
+        print("-" * 80)
+        for i, r in enumerate(ranked, 1):
+            print(f"[{i}] table: {r['table']}  score: {r['score']:.4f}")
+        print("=" * 80)
+    
+        os.makedirs(os.path.join("outputs", "task2"), exist_ok=True)
+        out_path = os.path.join("outputs", "task2", "task2_llm_results.json")
+        write_json(out_path, {
+            "query": args.query,
+            "mode": "embedding",   # mark that this result was produced by embedding
+            "embedding_model": args.embedding_model,
+            "schemas": args.schemas,
+            "choices": ranked      # ranked list: [{"table": ..., "score": ...}]
+        })
+        print(f"Saved: {out_path}")
+
+        return  # 结束 embedding 分支
+    
 
     # Build compact snippets for the LLM
     snippets = [build_table_snippet(s) for s in summaries[: args.limit]]
